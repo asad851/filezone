@@ -1,0 +1,6 @@
+body {
+  background-color: #ffffff;
+  background-image: radial-gradient(#3d3e3f 1px, transparent 1px);
+  background-size: 30px 30px;
+  /* animation: moveDots 10s linear infinite; */
+}
