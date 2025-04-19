@@ -1,14 +1,14 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getStorage } from 'firebase/storage';
+import { getStorage } from "firebase/storage";
 const firebaseConfig = {
-  apiKey: "AIzaSyDQ8tKGmVTrHm8IAWkruKnfJDJZxbrQ89k",
-  authDomain: "filezone-408b1.firebaseapp.com",
-  projectId: "filezone-408b1",
-  storageBucket: "filezone-408b1.firebasestorage.app",
-  messagingSenderId: "601699373538",
-  appId: "1:601699373538:web:0fc2a2843d9b991fdce9bb",
-  measurementId: "G-0RW2WLBN2Z"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSENGER_SENDING_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
