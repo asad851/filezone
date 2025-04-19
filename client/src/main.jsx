@@ -8,12 +8,12 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ThemeProvider attribute="class">
-      <Provider store={store}>
+    <Provider store={store}>
+      <ThemeProvider attribute="class">
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </Provider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </Provider>
   </StrictMode>
 );

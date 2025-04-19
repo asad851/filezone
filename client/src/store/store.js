@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./reducers";
-import { api } from "../helper/apiHelper";
+import { authenticationApi } from "@/helper/apis/authentication/setup";
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
+    getDefaultMiddleware().concat(authenticationApi.middleware),
 });
 export default store;

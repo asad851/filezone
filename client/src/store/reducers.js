@@ -1,8 +1,15 @@
 import { combineReducers } from "redux";
-import { api } from "../helper/apiHelper";
 import auth from "./auth/authSlice";
-const rootReducer = combineReducers({
-  auth: auth,
-  [api.reducerPath]: api.reducer,
+import { authenticationApi } from "@/helper/apis/authentication/setup";
+const appReducer = combineReducers({
+  auth,
+  [authenticationApi.reducerPath]: authenticationApi.reducer,
 });
+const rootReducer = (state, action) => {
+  if (action.type === "auth/logoutUser") {
+    state = undefined; 
+  }
+  return appReducer(state, action);
+};
+
 export default rootReducer;

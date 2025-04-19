@@ -3,14 +3,17 @@ import { createSlice } from "@reduxjs/toolkit";
 const authSlicer = createSlice({
   name: "auth",
   initialState: {
-    userData: null,
+    userData: 55,
   },
   reducers: {
     loginUser: (state, action) => {
-      state.loginUser = action.payload;
+      state.userData = action.payload;
+    },
+    logoutUser: (state) => {
+      state.userData = null;
     },
   },
 });
 
+export const { loginUser, logoutUser } = authSlicer.actions;
 export default authSlicer.reducer;
-export const {setUserData} = authSlicer.actions

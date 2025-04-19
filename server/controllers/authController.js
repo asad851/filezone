@@ -3,7 +3,6 @@ import generateToken from "../utils/generateToken.js";
 import jwt from "jsonwebtoken";
 import { prisma } from "../prisma/client.js";
 
-
 export const loginController = async (req, res) => {
   try {
     let { email, password } = req.body;
@@ -32,8 +31,8 @@ export const loginController = async (req, res) => {
           .status(201)
           .cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: false,
+            sameSite: "None",
           })
           .json({ errorMessage: null, response: dataTojson });
       }
@@ -99,6 +98,21 @@ export const registerController = async (req, res) => {
       console.error(err);
       res.status(500).json({ errorMessage: "Internal server error!" });
     }
+  } catch (err) {
+    res.status(500).json({ errorMessage: "Internal server error!" });
+  }
+};
+
+export const logoutController = async (req, res) => {
+  try {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        sameSite: "None",
+        secure: false,
+        path: "/",
+      })
+      .json("user successfully logged out");
   } catch (err) {
     res.status(500).json({ errorMessage: "Internal server error!" });
   }
