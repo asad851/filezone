@@ -1,0 +1,53 @@
+import { API_URL } from "@/helper/apiHelper";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+export const fileFolderApi = createApi({
+  reducerPath: "",
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_URL,
+    credentials: "include",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }),
+  endpoints: (builder) => ({
+    postCreateSegment: builder.mutation({
+      query: (data) => ({
+        url: "/segment/create",
+        method: "POST",
+        body: data,
+      }),
+      providesTags: ["Segment"],
+    }),
+    getSegment: builder.query({
+      query: () => ({
+        url: "/segment/get",
+        method: "GET",
+      }),
+      invalidatesTags: ["Segment"],
+    }),
+    updateSegment: builder.mutation({
+      query: (data, id) => ({
+        url: `/segment/update/${id}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Segment"],
+    }),
+    deleteSegment: builder.mutation({
+      query: (id) => ({
+        url: `/segment/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Segment"],
+    }),
+  }),
+});
+
+export const {
+  usePostCreateSegmentMutation,
+  useGetSegmentQuery,
+  useUpdateSegmentMutation,
+  useDeleteSegmentMutation,
+} = fileFolderApi;

@@ -89,7 +89,7 @@ function Register() {
           </a>
         )}
       </div> */}
-      <Card className={` bg-black w-3/4 md:w-[55%] lg:w-[40%]  `}>
+      <Card className={` bg-black w-3/4 md:w-[55%] lg:w-[35%]  `}>
         <CardHeader className={`text-center`}>
           <div className="w-full flex justify-center  h-32">
             <img

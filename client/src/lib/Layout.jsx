@@ -1,13 +1,16 @@
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
+import AppSidebar from "@/components/Sidebar";
 import React from "react";
 
 function Layout({ children }) {
   return (
-    <div className="">
+    <div className="w-full h-full">
       <Header />
-      <Sidebar />
-      <main>{children}</main>
+
+      {/* <AppSidebar /> */}
+      <main className="min-h-full w-full h-[calc(100dvh-88px)] px-4 py-2 ">
+        {children}
+      </main>
     </div>
   );
 }

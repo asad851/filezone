@@ -4,9 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 body {
-  background-color: #ffffff;
-  background-image: radial-gradient(#3d3e3f 1px, transparent 1px);
+  background-color: #eef0f6;
   background-size: 30px 30px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   /* animation: moveDots 10s linear infinite; */
 }
 
@@ -121,6 +121,7 @@ body {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

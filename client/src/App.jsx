@@ -4,6 +4,7 @@ import { protected_routes, public_routes } from "./routes";
 import AuthMiddleware from "./routes/authMiddleware";
 import Layout from "./lib/Layout";
 import NonAuthLayout from "./lib/NonAuthLayout";
+import { Toaster } from "./components/ui/sonner";
 function App() {
   return (
     <div>
@@ -31,6 +32,7 @@ function App() {
           />
         ))}
       </Routes>
+      <Toaster />
     </div>
   );
 }

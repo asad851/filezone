@@ -21,23 +21,26 @@ export const loginController = async (req, res) => {
           .json({ errorMessage: "Incorrect email or password" });
       } else {
         let dataTojson = {
+          id: userExist.id,
           name: userExist.name,
           email: userExist.email,
           avatar: userExist.avatar,
         };
-
         const token = generateToken(dataTojson);
+
         res
           .status(201)
           .cookie("token", token, {
             httpOnly: true,
             secure: false,
-            sameSite: "None",
+            sameSite: "lax",
+            path: "/",
           })
-          .json({ errorMessage: null, response: dataTojson });
+          .json({ errorMessage: null, response: { ...dataTojson, token } });
       }
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({ errorMessage: "Internal server error" });
   }
 };
@@ -90,8 +93,8 @@ export const registerController = async (req, res) => {
         .status(201)
         .cookie("token", token, {
           httpOnly: true,
-          secure: true,
-          sameSite: "strict",
+          secure: false,
+          sameSite: "none",
         })
         .json(response);
     } catch (err) {

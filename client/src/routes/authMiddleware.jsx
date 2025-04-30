@@ -5,7 +5,6 @@ import { LOGIN_PATH } from "./routeUrl";
 
 function AuthMiddleware(props) {
   const { userData } = useSelector((state) => state.auth);
-  console.log(userData);
   if (!userData) {
     localStorage.clear();
     return (
