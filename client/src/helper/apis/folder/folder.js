@@ -3,7 +3,7 @@ import { useGetSegmentQuery, usePostCreateSegmentMutation } from "./setup";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/firebase";
 import { convertFilesToHierarchy } from "@/utils/fileFolder";
-
+import { showToast } from "@/lib/toast";
 export const useGetSegmentApi = () => {
   const { data, error, isLoading } = useGetSegmentQuery();
 };
@@ -20,6 +20,10 @@ export const useCreateSegmentApi = () => {
         const fileRef = ref(storage, `uploads/${name}`);
 
         try {
+          showToast(
+            "You will be notified once your upload has been completed",
+            "info"
+          );
           const snapshot = await uploadBytes(fileRef, file);
           const downloadURL = await getDownloadURL(snapshot.ref);
           urls.push({ url: downloadURL, path: file.path });
@@ -40,8 +44,10 @@ export const useCreateSegmentApi = () => {
         await postCreateSegment({ segmentTree: el });
       });
       await Promise.all(promisesArr);
+      showToast("Folder/file successfully uploaded", "success");
     } catch (err) {
       console.log(err);
+      showToast(err?.data?.errorMessage, "error");
     }
   };
   return {

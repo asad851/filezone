@@ -25,7 +25,7 @@ export const useLoginApi = () => {
 
       localStorage.setItem("userData", JSON.stringify(responseData));
       navigate(HOME);
-     
+    } catch (err) {
       console.log("Login failed", err);
       showToast(err?.data?.errorMessage, "error");
     }
@@ -49,9 +49,8 @@ export const useRegisterApi = () => {
       dispatch(loginUser(responseData));
       localStorage.setItem("userData", JSON.stringify(responseData));
       navigate(HOME);
-
     } catch (err) {
-      console.log(err);
+      showToast(err?.data?.errorMessage, "error");
     }
   };
   return {
