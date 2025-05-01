@@ -12,18 +12,18 @@ export const fileFolderApi = createApi({
     },
   }),
   endpoints: (builder) => ({
+    getSegment: builder.query({
+      query: () => ({
+        url: "/segment/get",
+        method: "GET",
+      }),
+      providesTags: ["Segment"],
+    }),
     postCreateSegment: builder.mutation({
       query: (data) => ({
         url: "/segment/create",
         method: "POST",
         body: data,
-      }),
-      providesTags: ["Segment"],
-    }),
-    getSegment: builder.query({
-      query: () => ({
-        url: "/segment/get",
-        method: "GET",
       }),
       invalidatesTags: ["Segment"],
     }),

@@ -29,6 +29,10 @@ export const useCreateSegmentApi = () => {
           urls.push({ url: downloadURL, path: file.path });
         } catch (err) {
           console.error("Upload error", err);
+          showToast(
+            "There has been some error while uploading the file",
+            "error"
+          );
         }
       });
       await Promise.all(promises);
