@@ -13,7 +13,7 @@ export const newSegmentController = async (req, res) => {
   try {
     const user = req.user;
     const { segmentTree, parentId } = req.body;
-
+    console.log(parentId);
     if (!segmentTree || !user?.id) {
       return res.status(400).json({ errorMessage: "Invalid data" });
     }
@@ -30,7 +30,6 @@ export const newSegmentController = async (req, res) => {
       message: "Segment tree created successfully",
       response: { tree },
     });
-    
   } catch (err) {
     console.error("[Segment Creation Error]", err.message);
     res.status(500).json({ errorMessage: "Failed to create files/folder" });
@@ -97,7 +96,6 @@ export const updateSegment = async (req, res) => {
     const segmentId = req.params.id;
     const userId = req.user.id;
     const { name, documentKey, parentId } = req.body;
-
     const segment = await prisma.segment.findUnique({
       where: { id: segmentId },
     });

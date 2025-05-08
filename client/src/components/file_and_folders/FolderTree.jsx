@@ -9,30 +9,26 @@ function FolderTree({ folders, onFolderClick, rename, setRename }) {
     dispatch(setSelectedFolder(folder));
   };
 
-  return (
-    <div className="flex w-full gap-3  items-center flex-wrap">
-      {folders?.children?.map((item) =>
-        item.isDocument === false ? (
-          <Folder
-            key={item.id}
-            folder={item}
-            onFolderClick={onFolderClick}
-            handleFolderClick={handleFolderClick}
-            rename={rename}
-            setRename={setRename}
-          />
-        ) : (
-          <File
-            key={item.id}
-            file={item}
-            handleFolderClick={handleFolderClick}
-            rename={rename}
-            setRename={setRename}
-            folder={item}
-          />
-        )
-      )}
-    </div>
+  return folders?.map((item) =>
+    item.isDocument === false ? (
+      <Folder
+        key={item.id}
+        folder={item}
+        onFolderClick={onFolderClick}
+        handleFolderClick={handleFolderClick}
+        rename={rename}
+        setRename={setRename}
+      />
+    ) : (
+      <File
+        key={item.id}
+        file={item}
+        handleFolderClick={handleFolderClick}
+        rename={rename}
+        setRename={setRename}
+        folder={item}
+      />
+    )
   );
 }
 

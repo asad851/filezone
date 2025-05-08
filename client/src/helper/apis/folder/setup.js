@@ -28,9 +28,9 @@ export const fileFolderApi = createApi({
       invalidatesTags: ["Segment"],
     }),
     updateSegment: builder.mutation({
-      query: (data, id) => ({
+      query: ({ data, id }) => ({
         url: `/segment/update/${id}`,
-        method: "POST",
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: ["Segment"],

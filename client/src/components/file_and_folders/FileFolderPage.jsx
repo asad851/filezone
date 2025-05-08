@@ -1,45 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
-import { setCurrentFolder } from "@/store/segments/segmentSlice";
-import { FolderIcon } from "lucide-react";
-import { toast } from "sonner";
-import { showToast } from "@/lib/toast";
+import {
+  setBreadcrumbPath,
+  setCurrentFolder,
+  setSegment,
+} from "@/store/segments/segmentSlice";
+import FolderTree from "./FolderTree";
+import Loader from "../loader";
 
 export default function FileFolderPage() {
   const dispatch = useDispatch();
+  const { currentFolder, breadcrumbPath, segmentData } = useSelector(
+    (state) => state.segment
+  );
   const { data, error, isLoading } = useGetSegmentQuery();
-
+  const [rename, setRename] = useState("");
   useEffect(() => {
-    dispatch(setCurrentFolder(data?.tree));
-  }, [data, dispatch]);
+    dispatch(setSegment(data?.tree));
+    if (breadcrumbPath?.length === 0)
+      dispatch(setCurrentFolder(data?.tree || []));
+  }, [data, dispatch, breadcrumbPath]);
 
   const handleFolderClick = (folder) => {
-    const newPath = [...path, folder];
-    dispatch(setCurrentFolder(folder));
+    let path = { id: folder?.id, name: folder?.name };
+    const newPath = [...breadcrumbPath, path];
+    dispatch(setBreadcrumbPath(newPath));
+    dispatch(setCurrentFolder(folder?.children));
   };
-  const arr = Array(10).fill("name");
 
-  return (
+  return !isLoading ? (
     <div
-      className="w-full h-full max-h-[98%] overflow-y-auto px-3 py-5 grid gap-5 auto-rows-[150px]  "
+      className="w-full h-full max-h-[93%] overflow-y-auto px-3 py-5 grid gap-5 auto-rows-[220px]  "
       style={{
-        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 260px))",
       }}
     >
-      {arr?.map((el, id) => (
-        <div
-          key={id}
-          className={`p-3 max-w-50 max-h-55 flex flex-col justify-center items-center  bg-[rgb(190,219,255,0.3)]`}
-        >
-          <FolderIcon
-            height={150}
-            width={150}
-            className="stroke-[0.2px] fill-amber-300 "
-          />
-          <p className="text-xs font-medium">{el}</p>
-        </div>
-      ))}
+      <FolderTree
+        folders={currentFolder}
+        rename={rename}
+        setRename={setRename}
+        onFolderClick={handleFolderClick}
+      />
     </div>
+  ) : (
+    <Loader />
   );
 }

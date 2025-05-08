@@ -36,3 +36,16 @@ export const convertFilesToHierarchy = (files) => {
   };
   return mapToArray(rootMap);
 };
+
+export const findFolderById = (id, nodes) => {
+  for (let node of nodes) {
+    if (node.id === id) return node;
+    if (node.children?.length) {
+      const found = findFolderById(id, node.children);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+// Update breadcrumb path when folder is updated or navigated

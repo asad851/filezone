@@ -60,10 +60,16 @@ export async function getAllDescendants(segmentId) {
 
 export const deleteFileFromFirebase = async (filePath) => {
   try {
-    const file = bucket.file(filePath);
+    const internalFilePath = filePath.includes('/o/')
+      ? decodeURIComponent(filePath.split("/o/")[1].split("?")[0])
+      : filePath;
+
+    const file = bucket.file(internalFilePath);
     await file.delete();
-    console.log(`Firebase deleted: ${filePath}`);
+
+    console.log(`Firebase deleted: ${internalFilePath}`);
   } catch (err) {
-    console.warn(`Firebase delete failed: ${filePath}`, err.message);
+    console.warn(`Firebase delete failed: ${filePath}`, err);
   }
 };
+

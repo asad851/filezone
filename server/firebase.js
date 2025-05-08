@@ -10,5 +10,4 @@ admin.initializeApp({
 });
 
 const bucket = admin.storage().bucket();
-
 export { admin, bucket };
