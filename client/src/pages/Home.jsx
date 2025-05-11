@@ -1,28 +1,97 @@
+import React, { useState } from "react";
 import MainContentarea from "@/components/MainContentarea";
 import AppSidebar from "@/components/Sidebar";
 import { Input } from "@/components/ui/input";
 import { useCreateSegmentApi } from "@/helper/apis/folder/folder";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
-import { DndContext } from "@dnd-kit/core";
-import React from "react";
-import { useDropzone } from "react-dropzone";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { File, Folder } from "@/components/file_and_folders/FilesFolder";
+import { FileIcon, FolderIcon } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { moveSegment, setCurrentFolder } from "@/store/segments/segmentSlice";
+import {
+  findFolderById,
+  insertItem,
+  isDescendant,
+  removeItemById,
+} from "@/utils/fileFolder";
+import { showToast } from "@/lib/toast";
 function Home() {
+  const dispatch = useDispatch();
+  const [draggedItem, setDraggedItem] = useState(null);
   const { data, error, isLoading } = useGetSegmentQuery();
   const { handleCreateSegment } = useCreateSegmentApi();
-  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-    useDropzone({ onDrop });
+  const { segmentData, breadcrumbPath, currentFolder } = useSelector(
+    (state) => state.segment
+  );
+  const handleDragStart = (event) => {
+    setDraggedItem(event.active.data.current);
+  };
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (!over) return;
+    setDraggedItem(null);
+    const activeId = active.id.split("/").pop();
+    const overId = over.id.split("/").pop();
+    if (activeId === overId) return;
 
-  function onDrop(acceptedFiles, event) {
-    handleCreateSegment(acceptedFiles);
-    // console.log(acceptedFiles)
-  }
+    const draggedItem = active.data.current.item;
+    const targetFolder = over.data.current.folder;
 
+    if (draggedItem && targetFolder) {
+      console.log(`Move '${draggedItem.name}' → into '${targetFolder.name}'`);
+      const sourceItem = findFolderById(activeId, segmentData);
+      const targetItem = findFolderById(overId, segmentData);
+      if (
+        !sourceItem ||
+        !targetItem ||
+        sourceItem.id === targetItem.id ||
+        isDescendant(sourceItem, overId)
+      ) {
+        showToast(
+          "Invalid move: Cannot move a parent into its child",
+          "warning"
+        );
+      }
+
+      // const updatedTree = removeItemById(segmentData, activeId);
+      // const finalTree = insertItem(updatedTree, overId, sourceItem);
+      let length = breadcrumbPath.length;
+      let lastElem = breadcrumbPath[length - 1]?.id;
+      if (
+        length > 0 &&
+        lastElem === currentFolder[0].parentId &&
+        currentFolder[0]?.id !== segmentData[0]?.id
+      ) {
+        let updated = findFolderById(lastElem, segmentData);
+        console.log(updated);
+        dispatch(setCurrentFolder(updated?.children));
+      }
+    }
+  };
   return (
-    <DndContext>
-      <div className="w-full h-full flex gap-5 ">
-        <AppSidebar />
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="w-full h-full flex gap-5 overflow-hidden ">
+        <AppSidebar dragging={draggedItem} />
         <MainContentarea />
       </div>
+      <DragOverlay>
+        {draggedItem?.type === "file" ? (
+          <div className="bg-gray-200 rounded-md shadow p-4 flex gap-5 h-max items-center">
+            <FileIcon />
+            <p className="text-sm font-semibold truncate">
+              {draggedItem?.item?.name}
+            </p>
+          </div>
+        ) : draggedItem?.type === "folder" ? (
+          <div className="bg-gray-200 rounded-md shadow p-4 flex gap-5 h-max items-center">
+            <FolderIcon />
+            <p className="text-sm font-semibold truncate">
+              {draggedItem?.item?.name}
+            </p>
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }

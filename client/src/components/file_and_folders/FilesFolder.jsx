@@ -1,6 +1,7 @@
 import {
   DeleteIcon,
   EllipsisVertical,
+  FileIcon,
   FolderIcon,
   Move,
   Trash,
@@ -20,15 +21,19 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { RenamePopover } from "./RenamePopover";
 import { useRef, useState } from "react";
 import { useDeleteSegmentApi } from "@/helper/apis/folder/folder";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setBreadcrumbPath,
-  setCurrentFolder,
-} from "@/store/segments/segmentSlice";
+import { setCurrentFolder } from "@/store/segments/segmentSlice";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
+import { useDraggable, useDroppable } from "@dnd-kit/core";
 export const Folder = ({
   folder,
   onFolderClick,
@@ -38,28 +43,77 @@ export const Folder = ({
   setRename,
 }) => {
   const menuRef = useRef(null);
+
+  const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+    id: `folder/${folder.id}`,
+    data: {
+      type: "folder",
+      folder,
+    },
+  });
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setDraggableRef,
+    transform,
+  } = useDraggable({
+    id: `folder/${folder.id}`,
+    data: {
+      type: "folder",
+      item: folder,
+    },
+  });
+
+  const mergedRef = (node) => {
+    setDroppableRef(node);
+    setDraggableRef(node);
+  };
+
+  const style = {
+    transform: transform
+      ? `translate(${transform.x}px, ${transform.y}px)`
+      : undefined,
+  };
+
   const handleDoubleClick = (folder) => {
     onFolderClick(folder);
   };
+
   return (
-    <div
-      onDoubleClick={() => handleDoubleClick(folder)}
-      className="` shadow p-3 max-w-70 max-h-70 flex flex-col justify-center items-center  bg-[rgb(190,219,255,0.3)] cursor-pointer rounded-md relative "
-    >
-      <div
-        className="absolute top-2 right-2  "
-        onClick={(e) => e.stopPropagation()}
-        onDoubleClick={(e) => e.stopPropagation()}
-      >
-        <DropdownMenuEllipsis ref={menuRef} folder={folder} />
-      </div>
-      <FolderIcon
-        height={150}
-        width={150}
-        className="stroke-[0.2px] fill-amber-300 "
-      />
-      <p className="text-xs font-medium">{folder?.name}</p>
-    </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            ref={mergedRef}
+            {...attributes}
+            {...listeners}
+            style={style}
+            onDoubleClick={() => handleDoubleClick(folder)}
+            className={`${
+              isOver ? "bg-blue-200" : "bg-gray-100"
+            } shadow p-3 max-w-70 max-h-70 flex flex-col justify-center items-center  cursor-pointer rounded-md relative`}
+          >
+            <div
+              className="absolute top-2 right-2  "
+              onClick={(e) => e.stopPropagation()}
+              onDoubleClick={(e) => e.stopPropagation()}
+            >
+              <DropdownMenuEllipsis ref={menuRef} folder={folder} />
+            </div>
+            <FolderIcon
+              height={150}
+              width={150}
+              className="stroke-[0.2px] fill-amber-300 "
+            />
+            <p className="text-xs font-medium">{folder?.name}</p>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{folder?.name}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
@@ -73,6 +127,19 @@ export const File = ({
   args,
 }) => {
   const ext = file?.name?.split(".").pop()?.toLowerCase();
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: `file/${file.id}`,
+    data: {
+      type: "file",
+      item: file,
+    },
+  });
+
+  const style = {
+    transform: transform
+      ? `translate(${transform.x}px, ${transform.y}px)`
+      : undefined,
+  };
 
   const renderPreview = () => {
     if (ext === "pdf") {
@@ -101,26 +168,52 @@ export const File = ({
       );
     }
   };
-
+  // bg-[rgb(190,219,255,0.3)]
   return (
-    <div
-      className="shadow p-3 max-w-70 max-h-70 flex flex-col justify-center items-center bg-[rgb(190,219,255,0.3)] cursor-pointer overflow-hidden rounded-md relative"
-      onDoubleClick={() => handleFolderClick?.(file)}
-    >
-      <div
-        className="absolute top-2 right-2"
-        onClick={(e) => e.stopPropagation()}
-        onDoubleClick={(e) => e.stopPropagation()}
-      >
-        <DropdownMenuEllipsis folder={folder} />
-      </div>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {!transform ? (
+            <div
+              ref={setNodeRef}
+              {...listeners}
+              {...attributes}
+              style={style}
+              className={`shadow p-3 max-w-70 max-h-70 flex flex-col justify-center items-center bg-gray-100  cursor-pointer overflow-hidden rounded-md relative`}
+              onDoubleClick={() => handleFolderClick?.(file)}
+            >
+              <div
+                className="absolute top-2 right-2"
+                onClick={(e) => e.stopPropagation()}
+                onDoubleClick={(e) => e.stopPropagation()}
+              >
+                <DropdownMenuEllipsis folder={folder} />
+              </div>
 
-      {renderPreview()}
+              {renderPreview()}
 
-      <p className="text-xs font-medium max-w-4/5 truncate mt-1 text-center">
-        {file?.name}
-      </p>
-    </div>
+              <p className="text-xs font-medium max-w-4/5 truncate mt-1 text-center">
+                {file?.name}
+              </p>
+            </div>
+          ) : (
+            <div
+              ref={setNodeRef}
+              {...listeners}
+              {...attributes}
+              style={style}
+              className="bg-gray-200 rounded-md shadow p-4 flex gap-5 h-max items-center"
+            >
+              <FileIcon />
+              <p className="text-sm font-semibold truncate">{file?.name}</p>
+            </div>
+          )}
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{file?.name}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 

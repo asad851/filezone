@@ -26,7 +26,7 @@ function MainContentarea() {
   };
 
   return (
-    <div className="w-full h-full bg-white rounded-lg shadow-lg p-5 overflow-hidden">
+    <div className=" w-full  h-full bg-white rounded-lg shadow-lg p-5 overflow-hidden">
       <div className="w-full p-3 border-b-2">
         <FolderBreadcrumb
           path={breadcrumbPath}

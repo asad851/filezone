@@ -15,12 +15,12 @@ import React from "react";
 
 const FolderBreadcrumb = ({ path, onNavigateToRoot, onNavigate }) => {
   const folders = path;
-  const maxVisible = 4;
+  const maxVisible = 2;
 
   const hiddenFolders =
-    folders.length > maxVisible ? folders.slice(0, folders.length - 3) : [];
+    folders.length > maxVisible ? folders.slice(0, folders.length - 1) : [];
   const visibleFolders =
-    folders.length > maxVisible ? folders.slice(folders.length - 3) : folders;
+    folders.length > maxVisible ? folders.slice(folders.length - 1) : folders;
 
   return (
     <Breadcrumb className="mb-4 flex items-center">

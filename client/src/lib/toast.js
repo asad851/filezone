@@ -20,7 +20,7 @@ export const showToast = (message, type = "info") => {
     case "warning":
       toast.warning("Warning", {
         ...options,
-        className: "#eb6841",
+        className: "bg-[#eb6841!important]",
         cancel: true,
       });
       break;
@@ -28,6 +28,7 @@ export const showToast = (message, type = "info") => {
       toast.info("Info", {
         ...options,
         descriptionClassName: "[color:#666666!important]",
+        cancel: true,
       });
   }
 };

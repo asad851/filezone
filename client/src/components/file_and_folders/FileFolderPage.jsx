@@ -24,7 +24,12 @@ export default function FileFolderPage() {
 
   const handleFolderClick = (folder) => {
     let path = { id: folder?.id, name: folder?.name };
-    const newPath = [...breadcrumbPath, path];
+    let newPath;
+    if (breadcrumbPath.some((pth) => pth.id === folder.id)) {
+      return;
+    } else {
+      newPath = [...breadcrumbPath, path];
+    }
     dispatch(setBreadcrumbPath(newPath));
     dispatch(setCurrentFolder(folder?.children));
   };

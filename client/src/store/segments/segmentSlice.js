@@ -1,4 +1,11 @@
+import {
+  findFolderById,
+  insertItem,
+  isDescendant,
+  removeItemById,
+} from "@/utils/fileFolder";
 import { createSlice } from "@reduxjs/toolkit";
+import { showToast } from "@/lib/toast";
 const initialState = {
   segmentData: null,
   currentFolder: null,
@@ -40,6 +47,13 @@ const segmentSlicer = createSlice({
           break;
       }
     },
+    moveSegment: (state, action) => {
+      let length = state.breadcrumbPath.length;
+      let lastElem = state.breadcrumbPath[length - 1].id;
+      if (length > 0 && state.currentFolder[0].id !== state.segmentData[0].id) {
+        state.currentFolder = findFolderById(lastElem, finalTree);
+      }
+    },
   },
 });
 
@@ -50,4 +64,5 @@ export const {
   setSelectedFolder,
   setBreadcrumbPath,
   updateCurrentFolder,
+  moveSegment,
 } = segmentSlicer.actions;

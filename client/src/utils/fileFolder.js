@@ -48,4 +48,49 @@ export const findFolderById = (id, nodes) => {
   return null;
 };
 
-// Update breadcrumb path when folder is updated or navigated
+// Checks if targetId is in the subtree of sourceItem
+export function isDescendant(sourceItem, targetId) {
+  if (!sourceItem || !sourceItem.children) return false;
+  for (const child of sourceItem.children) {
+    if (child.id === targetId) return true;
+    if (!child.isDocument && isDescendant(child, targetId)) return true;
+  }
+  return false;
+}
+
+// Recursively finds and removes an item by id
+export function removeItemById(tree, itemId) {
+  return tree
+    .map((item) => {
+      if (item.id === itemId) return null;
+      if (!item.isDocument && item.children) {
+        return {
+          ...item,
+          children: removeItemById(item.children, itemId),
+        };
+      }
+      return item;
+    })
+    .filter(Boolean);
+}
+
+
+
+// Inserts an item into target folder's children
+export function insertItem(tree, targetFolderId, itemToInsert) {
+  return tree.map((item) => {
+    if (item.id === targetFolderId && !item.isDocument) {
+      return {
+        ...item,
+        children: [...(item.children || []), itemToInsert],
+      };
+    }
+    if (!item.isDocument && item.children) {
+      return {
+        ...item,
+        children: insertItem(item.children, targetFolderId, itemToInsert),
+      };
+    }
+    return item;
+  });
+}
