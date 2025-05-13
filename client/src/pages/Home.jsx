@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainContentarea from "@/components/MainContentarea";
 import AppSidebar from "@/components/Sidebar";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,14 @@ function Home() {
     setDraggedItem(null);
     const activeId = active.id.split("/").pop();
     const overId = over.id.split("/").pop();
-    if (activeId === overId) return;
+    const activeParentId = active?.data?.current?.item?.parentId;
+
+    if (
+      activeId === overId ||
+      activeParentId === overId ||
+      overId === "movefiletoHome"
+    )
+      return;
 
     const draggedItem = active.data.current.item;
     const targetFolder = over.data.current.folder;
@@ -46,31 +53,26 @@ function Home() {
       console.log(`Move '${draggedItem.name}' → into '${targetFolder.name}'`);
       const sourceItem = findFolderById(activeId, segmentData);
       const targetItem = findFolderById(overId, segmentData);
-      if (
-        !sourceItem ||
-        !targetItem ||
-        sourceItem.id === targetItem.id ||
-        isDescendant(sourceItem, overId)
-      ) {
+      if (isDescendant(sourceItem, overId)) {
         showToast(
           "Invalid move: Cannot move a parent into its child",
           "warning"
         );
+        return;
       }
 
       await handleUpdateSegment({ parentId: overId }, activeId);
-      let length = breadcrumbPath.length;
-      let lastElem = breadcrumbPath[length - 1]?.id;
-      if (
-        length > 0 &&
-        lastElem === currentFolder[0]?.parentId &&
-        currentFolder[0]?.id !== segmentData[0]?.id
-      ) {
-        let updated = findFolderById(lastElem, data?.response?.tree);
-        dispatch(setCurrentFolder(updated?.children));
-      }
     }
   };
+  useEffect(() => {
+    let length = breadcrumbPath.length;
+    let lastElem = breadcrumbPath[length - 1]?.id;
+    if (length > 0) {
+      let updated = findFolderById(lastElem, segmentData);
+      dispatch(setCurrentFolder(updated?.children));
+    }
+  }, [handleDragEnd]);
+
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="w-full h-full flex gap-5 overflow-hidden ">
