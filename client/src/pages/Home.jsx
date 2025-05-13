@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import MainContentarea from "@/components/MainContentarea";
 import AppSidebar from "@/components/Sidebar";
 import { Input } from "@/components/ui/input";
-import { useCreateSegmentApi } from "@/helper/apis/folder/folder";
+import {
+  useCreateSegmentApi,
+  useUpdateSegmentApi,
+} from "@/helper/apis/folder/folder";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { File, Folder } from "@/components/file_and_folders/FilesFolder";
@@ -19,6 +22,7 @@ import { showToast } from "@/lib/toast";
 function Home() {
   const dispatch = useDispatch();
   const [draggedItem, setDraggedItem] = useState(null);
+  const { handleUpdateSegment } = useUpdateSegmentApi();
   const { data, error, isLoading } = useGetSegmentQuery();
   const { handleCreateSegment } = useCreateSegmentApi();
   const { segmentData, breadcrumbPath, currentFolder } = useSelector(
@@ -27,7 +31,7 @@ function Home() {
   const handleDragStart = (event) => {
     setDraggedItem(event.active.data.current);
   };
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
     if (!over) return;
     setDraggedItem(null);
@@ -54,17 +58,15 @@ function Home() {
         );
       }
 
-      // const updatedTree = removeItemById(segmentData, activeId);
-      // const finalTree = insertItem(updatedTree, overId, sourceItem);
+      await handleUpdateSegment({ parentId: overId }, activeId);
       let length = breadcrumbPath.length;
       let lastElem = breadcrumbPath[length - 1]?.id;
       if (
         length > 0 &&
-        lastElem === currentFolder[0].parentId &&
+        lastElem === currentFolder[0]?.parentId &&
         currentFolder[0]?.id !== segmentData[0]?.id
       ) {
-        let updated = findFolderById(lastElem, segmentData);
-        console.log(updated);
+        let updated = findFolderById(lastElem, data?.response?.tree);
         dispatch(setCurrentFolder(updated?.children));
       }
     }

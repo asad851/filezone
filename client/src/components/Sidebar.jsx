@@ -16,11 +16,12 @@ import NewfolderPopover from "./NewfolderPopover";
 import { useSelector } from "react-redux";
 import FolderFileList from "./file_and_folders/FolderFileList";
 import Loader from "./loader";
-
+import { useDroppable } from "@dnd-kit/core";
+import { findFolderById } from "@/utils/fileFolder";
 export default function AppSidebar({ dragging }) {
   const folderInputRef = useRef(null);
   const fileInputRef = useRef(null);
-  const { segmentData } = useSelector((state) => state.segment);
+  const { segmentData, currentFolder } = useSelector((state) => state.segment);
   const { data, error, isLoading } = useGetSegmentQuery();
   const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
     useDropzone({ onDrop });
@@ -28,11 +29,17 @@ export default function AppSidebar({ dragging }) {
 
   function onDrop(acceptedFiles, event) {
     handleCreateSegment(acceptedFiles);
-    // console.log(acceptedFiles)
   }
 
+  const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+    id: `sidebar/movefiletoHome`,
+    data: {
+      type: "folder",
+      folder: segmentData,
+    },
+  });
   return (
-    <div className="h-full w-[30%] lg:w-[20%] py-5 ">
+    <div className="h-full w-[40%] lg:w-[30%] py-5 ">
       <div className="pb-5 border-b-2 flex flex-col gap-5 h-[27%]">
         <div className="hidden " {...getRootProps()}>
           <input {...getInputProps({})} multiple ref={fileInputRef} />
@@ -56,7 +63,10 @@ export default function AppSidebar({ dragging }) {
         </Button>
       </div>
       <div
-        className={`w-full h-full max-h-[74%] min-h-[425px] bg-white ${
+        ref={setDroppableRef}
+        className={`w-full h-full max-h-[74%] min-h-[425px]   ${
+          isOver ? "bg-blue-200" : "bg-white"
+        } ${
           dragging ? "overflow-hidden" : " overflow-y-auto"
         }  overflow-x-hidden mt-3 rounded-md shadow `}
       >

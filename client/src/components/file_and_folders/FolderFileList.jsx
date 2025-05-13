@@ -19,20 +19,11 @@ import { Filelist, FolderList } from "./Sidebarlist";
 export default function FolderFileList({ items }) {
   const dispatch = useDispatch();
   const { breadcrumbPath } = useSelector((state) => state.segment);
-
-  const [doubleclickFlag, setDoubleclickFlag] = useState(false);
   const [expandedFolders, setExpandedFolders] = useState({});
-  const toggleFolder = (id) => {
-    setExpandedFolders((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-  
+
   const renderItems = (items, level = 0) => {
     return items?.map((item) => {
       const isFolder = !item.isDocument;
-      const isExpanded = expandedFolders[item.id];
 
       return isFolder ? (
         <FolderList
@@ -40,9 +31,6 @@ export default function FolderFileList({ items }) {
           item={item}
           level={level}
           renderItems={renderItems}
-          isExpanded={isExpanded}
-        //   onFileFolderDoubleClick={onFileFolderDoubleClick}
-        //   onFolderSingleclick={onFolderSingleclick}
         />
       ) : (
         <Filelist item={item} level={level} key={item.id} />

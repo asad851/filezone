@@ -109,7 +109,10 @@ export const updateSegment = async (req, res) => {
       data: {
         ...(name && { name }),
         ...(documentKey && { documentKey }),
-        ...(parentId && { parentId: parent }),
+        ...(parentId &&
+          (parentId === "movefiletoHome"
+            ? { parentId: null }
+            : { parentId: parent })),
       },
     });
     return res.status(200).json({

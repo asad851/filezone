@@ -8,13 +8,28 @@ import {
 } from "@/store/segments/segmentSlice";
 import FolderTree from "./FolderTree";
 import Loader from "../loader";
-
+import { useDroppable } from "@dnd-kit/core";
+import { findFolderById } from "@/utils/fileFolder";
 export default function FileFolderPage() {
   const dispatch = useDispatch();
   const { currentFolder, breadcrumbPath, segmentData } = useSelector(
     (state) => state.segment
   );
   const { data, error, isLoading } = useGetSegmentQuery();
+  let currentId, folder;
+  if (segmentData) {
+    let last = breadcrumbPath[breadcrumbPath.length - 1];
+    currentId = last?.id;
+    folder = findFolderById(currentId, segmentData);
+  }
+  
+  const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+    id: `folderpage/${currentId ? currentId : "movefiletoHome"}`,
+    data: {
+      type: "folder",
+      folder: folder ? folder : segmentData,
+    },
+  });
   const [rename, setRename] = useState("");
   useEffect(() => {
     dispatch(setSegment(data?.tree));
@@ -36,7 +51,10 @@ export default function FileFolderPage() {
 
   return !isLoading ? (
     <div
-      className="w-full h-full max-h-[93%] overflow-y-auto px-3 py-5 grid gap-5 auto-rows-[220px]  "
+      ref={setDroppableRef}
+      className={`w-full h-full max-h-[93%] overflow-y-auto px-3 py-5 grid gap-5 auto-rows-[220px] ${
+        isOver ? "bg-blue-200" : ""
+      } `}
       style={{
         gridTemplateColumns: "repeat(auto-fit, minmax(250px, 260px))",
       }}

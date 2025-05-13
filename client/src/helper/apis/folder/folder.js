@@ -76,7 +76,7 @@ export const useCreateSegmentApi = () => {
       });
       showToast("folder created successfully!", "success");
     } catch (err) {
-      console.log(err)
+      console.log(err);
       showToast("failed to create folder", "error");
     }
   };
@@ -94,6 +94,7 @@ export const useUpdateSegmentApi = () => {
     useUpdateSegmentMutation();
   const handleUpdateSegment = async (data, id) => {
     try {
+      showToast("The segment is getting updated, please wait!", "info");
       const res = await updateSegment({ data, id }).unwrap();
       showToast("The segment has been updated successfully!", "success");
     } catch (err) {

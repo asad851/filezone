@@ -28,12 +28,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { RenamePopover } from "./RenamePopover";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDeleteSegmentApi } from "@/helper/apis/folder/folder";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentFolder } from "@/store/segments/segmentSlice";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
+
 export const Folder = ({
   folder,
   onFolderClick,
@@ -64,7 +65,7 @@ export const Folder = ({
       item: folder,
     },
   });
-
+  const [click, setClick] = useState(0);
   const mergedRef = (node) => {
     setDroppableRef(node);
     setDraggableRef(node);
@@ -79,35 +80,66 @@ export const Folder = ({
   const handleDoubleClick = (folder) => {
     onFolderClick(folder);
   };
+  useEffect(() => {
+    if (click === 2) onFolderClick(folder);
+    let timer = setTimeout(() => {
+      setClick(0);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [click]);
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div
-            ref={mergedRef}
-            {...attributes}
-            {...listeners}
-            style={style}
-            onDoubleClick={() => handleDoubleClick(folder)}
-            className={`${
-              isOver ? "bg-blue-200" : "bg-gray-100"
-            } shadow p-3 max-w-70 max-h-70 flex flex-col justify-center items-center  cursor-pointer rounded-md relative`}
-          >
+          {transform ? (
             <div
-              className="absolute top-2 right-2  "
-              onClick={(e) => e.stopPropagation()}
-              onDoubleClick={(e) => e.stopPropagation()}
+              ref={mergedRef}
+              {...attributes}
+              {...listeners}
+              style={style}
+              className="bg-gray-200 rounded-md shadow p-4 flex gap-5 h-max items-center"
             >
-              <DropdownMenuEllipsis ref={menuRef} folder={folder} />
+              <FolderIcon />
+              <p className="text-sm font-semibold truncate">{folder?.name}</p>
             </div>
-            <FolderIcon
-              height={150}
-              width={150}
-              className="stroke-[0.2px] fill-amber-300 "
-            />
-            <p className="text-xs font-medium">{folder?.name}</p>
-          </div>
+          ) : (
+            <div
+              className={`${
+                isOver ? "bg-blue-200" : "bg-gray-100"
+              } shadow max-w-70 max-h-70   cursor-pointer rounded-md relative`}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                setClick((prev) => Math.min(prev + 1, 2));
+              }}
+            >
+              <div
+                ref={mergedRef}
+                {...attributes}
+                {...listeners}
+                style={style}
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  handleDoubleClick(folder);
+                }}
+                className={`h-full w-full  p-3 flex flex-col justify-center items-center`}
+              >
+                <div
+                  className="absolute top-2 right-2  "
+                  onClick={(e) => e.stopPropagation()}
+                  onDoubleClick={(e) => e.stopPropagation()}
+                >
+                  <DropdownMenuEllipsis ref={menuRef} folder={folder} />
+                </div>
+                <FolderIcon
+                  height={150}
+                  width={150}
+                  className="stroke-[0.2px] fill-amber-300 "
+                />
+                <p className="text-xs font-medium">{folder?.name}</p>
+              </div>
+            </div>
+          )}
         </TooltipTrigger>
         <TooltipContent>
           <p>{folder?.name}</p>
@@ -233,7 +265,8 @@ export function DropdownMenuEllipsis({ folder }) {
     );
     dispatch(setCurrentFolder(filterDeleted));
   };
-  const handeOpen = () => {
+  const handeOpen = (e) => {
+    e.preventDefault();
     if (folder?.isDocument) {
       return;
     } else {
@@ -244,7 +277,7 @@ export function DropdownMenuEllipsis({ folder }) {
     <>
       <DropdownMenu open={openDropdown} onOpenChange={setOpenDropdown}>
         <DropdownMenuTrigger asChild>
-          <Button className="rounded-full" variant="ghost">
+          <Button className="rounded-full hover:shadow" variant="ghost" >
             <EllipsisVertical />
           </Button>
         </DropdownMenuTrigger>
@@ -252,11 +285,11 @@ export function DropdownMenuEllipsis({ folder }) {
           <DropdownMenuLabel>Options</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={() => handeOpen()}>
+            <DropdownMenuItem onPointerDown={(e) => handeOpen(e)}>
               Open
             </DropdownMenuItem>
             <DropdownMenuItem
-              onSelect={(e) => {
+              onPointerDown={(e) => {
                 e.preventDefault();
                 setOpenDropdown(false);
                 setOpenRenameDialog(true);
@@ -264,7 +297,7 @@ export function DropdownMenuEllipsis({ folder }) {
             >
               Rename
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={() => handleDeleteClick()}>
+            <DropdownMenuItem onPointerDown={() => handleDeleteClick()}>
               Delete
               <DropdownMenuShortcut>
                 <Trash />
