@@ -303,12 +303,6 @@ export function DropdownMenuEllipsis({ folder }) {
                 <Trash />
               </DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              Move
-              <DropdownMenuShortcut>
-                <Move />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
