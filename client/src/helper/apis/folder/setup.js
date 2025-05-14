@@ -1,6 +1,7 @@
 import { API_URL } from "@/helper/apiHelper";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 export const fileFolderApi = createApi({
   reducerPath: "",
   baseQuery: fetchBaseQuery({
@@ -9,6 +10,7 @@ export const fileFolderApi = createApi({
     mode: "cors",
     headers: {
       "Content-Type": "application/json",
+      Cookie: `token=${token}`,
     },
   }),
   endpoints: (builder) => ({
