@@ -9,10 +9,12 @@ import userRouter from "./routes/userRouter.js";
 import segmentRouter from "./routes/segmentRoutes.js";
 const app = express();
 dotenv.config();
+
+const url = process.env.FE_URL;
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: url,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
