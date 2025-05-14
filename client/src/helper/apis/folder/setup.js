@@ -10,7 +10,7 @@ export const fileFolderApi = createApi({
     mode: "cors",
     headers: {
       "Content-Type": "application/json",
-      Cookie: `token=${token}`,
+      cookies: `token=${token}`,
     },
   }),
   endpoints: (builder) => ({
