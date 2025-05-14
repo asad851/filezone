@@ -20,10 +20,10 @@ export const useLoginApi = () => {
         email: response?.response?.email,
         avatar: response?.response?.avatar,
       };
-      Cookies.set("token", response?.response?.token);
-      dispatch(loginUser(responseData));
+      // Cookies.set("token", response?.response?.token);
+      // dispatch(loginUser(responseData));
 
-      localStorage.setItem("userData", JSON.stringify(responseData));
+      // localStorage.setItem("userData", JSON.stringify(responseData));
       navigate(HOME);
     } catch (err) {
       console.log("Login failed", err);
