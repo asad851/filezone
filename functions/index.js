@@ -15,7 +15,7 @@ const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173", // change to prod URL if needed
+    origin: "https://filezone-rho.vercel.app", // change to prod URL if needed
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
