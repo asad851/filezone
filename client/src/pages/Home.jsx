@@ -42,7 +42,7 @@ function Home() {
     if (
       activeId === overId ||
       activeParentId === overId ||
-      overId === "movefiletoHome"
+      (activeParentId === null && overId === "movefiletoHome")
     )
       return;
 
