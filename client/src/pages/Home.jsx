@@ -73,7 +73,10 @@ function Home() {
     }
   }, [handleDragEnd]);
 
-   console.log(draggedItem)
+  useEffect(() => {
+    if (error) showToast("failed to get your files and folders", "error");
+  }, [error]);
+  console.log(draggedItem);
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="w-full h-full flex gap-5 overflow-hidden ">
