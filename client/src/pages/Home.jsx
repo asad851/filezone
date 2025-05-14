@@ -73,6 +73,7 @@ function Home() {
     }
   }, [handleDragEnd]);
 
+   console.log(draggedItem)
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="w-full h-full flex gap-5 overflow-hidden ">
