@@ -24,7 +24,6 @@ function Header() {
 
   const { userData } = useSelector((state) => state.auth);
   const handleLogout = () => {
-    console.log("sfds");
     Cookies.remove("token");
     localStorage.clear();
     dispatch(logoutUser());
