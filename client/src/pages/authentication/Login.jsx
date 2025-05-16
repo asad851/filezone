@@ -16,9 +16,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginApi } from "@/helper/apis/authentication/authentication";
 import { Link } from "react-router-dom";
 import { REGISTER_PATH } from "@/routes/routeUrl";
+import { Eye, EyeOff } from "lucide-react";
 function Login() {
   const { handleLogin, isLoading } = useLoginApi();
-
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -30,11 +31,12 @@ function Login() {
   const onSubmit = async (data) => {
     handleLogin(data);
   };
+  const toggleVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <div className="min-h-screen w-full flex justify-center items-center">
-      <Card
-        className={` bg-black w-3/4 md:w-[55%] lg:w-[40%] xl:w-1/3  `}
-      >
+      <Card className={` bg-black w-3/4 md:w-[55%] lg:w-[40%] xl:w-1/3  `}>
         <CardHeader className={`text-center`}>
           <div className="w-full h-32">
             <img
@@ -72,12 +74,23 @@ function Login() {
             <div className="flex flex-col text-white  gap-3">
               <Label htmlFor="terms">Password</Label>
               <div>
-                <Input
-                  id="password"
-                  {...register("password")}
-                  type="password"
-                  placeholder="Enter your password"
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    {...register("password")}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleVisibility}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primar bg-none hover:bg-none"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.password.message}
@@ -90,8 +103,7 @@ function Login() {
               Sign in
             </Button>
             <CardDescription>
-            if you dont have an account
-          ,{" "}
+              if you dont have an account ,{" "}
               <Link
                 to={REGISTER_PATH}
                 className="text-blue-400 text-md cursor-pointer"

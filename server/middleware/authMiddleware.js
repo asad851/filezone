@@ -6,7 +6,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const authMiddleware = (req, res, next) => {
   try {
-    const token = req.get("token");
+    const cookieArr = req.get("cookie").split("=");
+    const cookie = cookieArr[cookieArr.length - 1];
+    const token = req.get("token") === "undefined" ? cookie : req.get("token");
     if (!token) {
       return res
         .status(401)

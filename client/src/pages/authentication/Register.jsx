@@ -80,15 +80,7 @@ function Register() {
   };
   return (
     <div className="min-h-screen h-full w-full flex justify-center items-center overflow-y-auto py-3">
-      {/* <div className="text-black">
-        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-        <button onClick={handleUpload}>Upload</button>
-        {url && (
-          <a href={url} target="_blank">
-            View File
-          </a>
-        )}
-      </div> */}
+     
       <Card className={` bg-black w-3/4 md:w-[55%] lg:w-[35%]  `}>
         <CardHeader className={`text-center`}>
           <div className="w-full flex justify-center  h-32">
