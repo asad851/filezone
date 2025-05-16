@@ -10,6 +10,7 @@ import FolderTree from "./FolderTree";
 import Loader from "../loader";
 import { useDroppable } from "@dnd-kit/core";
 import { findFolderById } from "@/utils/fileFolder";
+import FileViewerModal from "./FileViewerModal";
 export default function FileFolderPage() {
   const dispatch = useDispatch();
   const { currentFolder, breadcrumbPath, segmentData } = useSelector(
@@ -22,7 +23,7 @@ export default function FileFolderPage() {
     currentId = last?.id;
     folder = findFolderById(currentId, segmentData);
   }
-  
+
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: `folderpage/${currentId ? currentId : "movefiletoHome"}`,
     data: {

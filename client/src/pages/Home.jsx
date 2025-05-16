@@ -7,7 +7,11 @@ import {
   useUpdateSegmentApi,
 } from "@/helper/apis/folder/folder";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor, useSensor, useSensors
+} from "@dnd-kit/core";
 import { File, Folder } from "@/components/file_and_folders/FilesFolder";
 import { FileIcon, FolderIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +32,14 @@ function Home() {
   const { segmentData, breadcrumbPath, currentFolder } = useSelector(
     (state) => state.segment
   );
+
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      delay: 250, // Keep your desired delay for now, or test with 0
+      tolerance: 5,
+    },
+  });
+  const sensors = useSensors(pointerSensor);
   const handleDragStart = (event) => {
     setDraggedItem(event.active.data.current);
   };
@@ -50,7 +62,7 @@ function Home() {
     const targetFolder = over.data.current.folder;
 
     if (draggedItem && targetFolder) {
-      console.log(`Move '${draggedItem.name}' → into '${targetFolder.name}'`);
+      // console.log(`Move '${draggedItem.name}' → into '${targetFolder.name}'`);
       const sourceItem = findFolderById(activeId, segmentData);
       const targetItem = findFolderById(overId, segmentData);
       if (isDescendant(sourceItem, overId)) {
@@ -76,9 +88,13 @@ function Home() {
   useEffect(() => {
     if (error) showToast("failed to get your files and folders", "error");
   }, [error]);
-  console.log(draggedItem);
+
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      sensors={sensors}
+    >
       <div className="w-full h-full flex gap-5 overflow-hidden ">
         <AppSidebar dragging={draggedItem} />
         <MainContentarea />

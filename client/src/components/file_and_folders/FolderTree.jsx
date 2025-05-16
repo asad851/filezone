@@ -24,6 +24,7 @@ function FolderTree({ folders, onFolderClick, rename, setRename }) {
         key={item.id}
         file={item}
         handleFolderClick={handleFolderClick}
+        onFolderClick={onFolderClick}
         rename={rename}
         setRename={setRename}
         folder={item}

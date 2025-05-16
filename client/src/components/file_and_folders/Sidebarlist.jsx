@@ -39,12 +39,10 @@ export function FolderList({ item, level, renderItems }) {
       item: item,
     },
   });
-  const [canDrag, setCanDrag] = useState(false);
-  const timeoutRef = useRef(null);
 
   const mergedRef = (node) => {
     setDroppableRef(node);
-    if (canDrag) setDraggableRef(node);
+    setDraggableRef(node);
   };
 
   const style = {
@@ -92,18 +90,6 @@ export function FolderList({ item, level, renderItems }) {
     toggleFolder(item.id);
   };
 
-  const handlePointerDown = (e) => {
-    e.stopPropagation();
-    timeoutRef.current = setTimeout(() => {
-      setCanDrag(true);
-    }, 300);
-  };
-
-  const handlePointerUp = () => {
-    clearTimeout(timeoutRef.current);
-    setCanDrag(false);
-  };
-
   return (
     <>
       <div
@@ -117,9 +103,6 @@ export function FolderList({ item, level, renderItems }) {
         } ${isOver ? "bg-blue-200" : ""} ${
           isDragging ? "cursor-[grabbing!important]" : "cursor-pointer"
         }`}
-        onMouseDown={handlePointerDown}
-        onMouseUp={handlePointerUp}
-        onMouseLeave={handlePointerUp}
       >
         <div className="flex items-center gap-1 rounded-md p-1">
           {/* Drag handle only */}
@@ -167,10 +150,6 @@ export function FolderList({ item, level, renderItems }) {
 }
 
 export function Filelist({ item, level }) {
-  const [canDrag, setCanDrag] = useState(false);
-
-  const timeoutRef = useRef(null);
-
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `sidebarfile/${item.id}`,
     data: {
@@ -185,31 +164,9 @@ export function Filelist({ item, level }) {
       : undefined,
   };
 
-  const handlePointerDown = (e) => {
-    e.stopPropagation();
-    timeoutRef.current = setTimeout(() => {
-      setCanDrag(true);
-    }, 300);
-  };
-
-  const handlePointerUp = () => {
-    clearTimeout(timeoutRef.current);
-    setCanDrag(false);
-  };
-  const ref = (node) => {
-    if (canDrag) {
-      setNodeRef(node);
-    } else {
-      null;
-    }
-  };
-
   return (
     <div
-      onMouseDown={handlePointerDown}
-      onMouseUp={handlePointerUp}
-      onMouseLeave={handlePointerUp}
-      ref={ref}
+      ref={setNodeRef}
       {...attributes}
       {...listeners}
       style={style}

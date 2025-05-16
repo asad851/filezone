@@ -23,14 +23,18 @@ export default function AppSidebar({ dragging }) {
   const fileInputRef = useRef(null);
   const { segmentData, currentFolder } = useSelector((state) => state.segment);
   const { data, error, isLoading } = useGetSegmentQuery();
-  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-    useDropzone({ onDrop });
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      "application/pdf": [".pdf"],
+      "image/*": [".jpeg", ".jpg", ".png"],
+    },
+  });
   const { handleCreateSegment } = useCreateSegmentApi();
 
   function onDrop(acceptedFiles, event) {
     handleCreateSegment(acceptedFiles);
   }
-
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: `sidebar/movefiletoHome`,
     data: {
