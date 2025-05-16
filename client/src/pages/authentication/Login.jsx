@@ -17,6 +17,7 @@ import { useLoginApi } from "@/helper/apis/authentication/authentication";
 import { Link } from "react-router-dom";
 import { REGISTER_PATH } from "@/routes/routeUrl";
 import { Eye, EyeOff } from "lucide-react";
+import Loader from "@/components/loader";
 function Login() {
   const { handleLogin, isLoading } = useLoginApi();
   const [showPassword, setShowPassword] = useState(false);
@@ -100,7 +101,7 @@ function Login() {
             </div>
 
             <Button type="submit" className={`mt-5`}>
-              Sign in
+              {!isLoading ? "Sign in" : <Loader />}
             </Button>
             <CardDescription>
               if you dont have an account ,{" "}
