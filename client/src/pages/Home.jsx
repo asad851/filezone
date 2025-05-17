@@ -10,12 +10,14 @@ import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
 import {
   DndContext,
   DragOverlay,
-  PointerSensor, useSensor, useSensors
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
 import { File, Folder } from "@/components/file_and_folders/FilesFolder";
 import { FileIcon, FolderIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { moveSegment, setCurrentFolder } from "@/store/segments/segmentSlice";
+import { setCurrentFolder } from "@/store/segments/segmentSlice";
 import {
   findFolderById,
   insertItem,
@@ -29,7 +31,7 @@ function Home() {
   const { handleUpdateSegment } = useUpdateSegmentApi();
   const { data, error, isLoading } = useGetSegmentQuery();
   const { handleCreateSegment } = useCreateSegmentApi();
-  const { segmentData, breadcrumbPath, currentFolder } = useSelector(
+  const { segmentData, breadcrumbPath, currentFolder ,selectedFolder} = useSelector(
     (state) => state.segment
   );
 
@@ -76,6 +78,7 @@ function Home() {
       await handleUpdateSegment({ parentId: overId }, activeId);
     }
   };
+  console.log(selectedFolder)
   useEffect(() => {
     let length = breadcrumbPath.length;
     let lastElem = breadcrumbPath[length - 1]?.id;

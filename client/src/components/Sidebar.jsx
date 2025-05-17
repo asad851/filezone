@@ -83,7 +83,7 @@ export default function AppSidebar({ dragging }) {
         )}
         {segmentData?.length === 0 && (
           <div className="px-2 h-full w-full flex items-center justify-center">
-            <h6>Oops No Folder/Files were found.</h6>
+            <h6 className="text-center">Oops No Folder/Files were found.</h6>
           </div>
         )}
       </div>

@@ -31,7 +31,10 @@ import { RenamePopover } from "./RenamePopover";
 import { useEffect, useRef, useState } from "react";
 import { useDeleteSegmentApi } from "@/helper/apis/folder/folder";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentFolder } from "@/store/segments/segmentSlice";
+import {
+  setCurrentFolder,
+  setSelectedFolder,
+} from "@/store/segments/segmentSlice";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import FileViewerModal from "./FileViewerModal";
@@ -44,8 +47,10 @@ export const Folder = ({
   rename,
   setRename,
 }) => {
+  const dispatch = useDispatch();
   const menuRef = useRef(null);
   const timeoutRef = useRef(null);
+  const { selectedFolder } = useSelector((state) => state.segment);
   const [canDrag, setCanDrag] = useState(false);
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: `folder/${folder.id}`,
@@ -60,6 +65,7 @@ export const Folder = ({
     listeners,
     setNodeRef: setDraggableRef,
     transform,
+    isDragging,
   } = useDraggable({
     id: `folder/${folder.id}`,
     data: {
@@ -85,25 +91,25 @@ export const Folder = ({
     touchAction: "none", // Important for mobile drag responsiveness
     userSelect: "none",
     padding: "1rem",
-    cursor: "grab",
   };
 
   const handleDoubleClick = (folder) => {
     onFolderClick(folder);
   };
+  const isFolderSelected = selectedFolder?.some((el) => el?.id === folder?.id);
   useEffect(() => {
-    if (click === 2) onFolderClick(folder);
+    if (click === 2 && !isFolderSelected) onFolderClick(folder);
     let timer = setTimeout(() => {
       setClick(0);
     }, 1000);
     return () => clearTimeout(timer);
-  }, [click]);
+  }, [click, isFolderSelected]);
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          {transform ? (
+          {isDragging ? (
             <div
               ref={mergedRef}
               {...attributes}
@@ -116,12 +122,13 @@ export const Folder = ({
             </div>
           ) : (
             <div
-              className={`${
-                isOver ? "bg-blue-200" : "bg-gray-100"
+              className={`${isOver ? "bg-blue-200" : "bg-gray-100"} ${
+                isFolderSelected ? "bg-[#dfe8fd!important]" : ""
               } shadow max-w-70 max-h-70   cursor-pointer rounded-md relative`}
               onPointerDown={(e) => {
                 e.stopPropagation();
                 setClick((prev) => Math.min(prev + 1, 2));
+                dispatch(setSelectedFolder(folder));
               }}
             >
               <div
@@ -131,21 +138,23 @@ export const Folder = ({
                 style={style}
                 onDoubleClick={(e) => {
                   e.stopPropagation();
-                  handleDoubleClick(folder);
+                  // handleDoubleClick(folder);
                 }}
                 className={`h-full w-full  p-3 flex flex-col justify-center items-center`}
               >
-                <div
-                  className="absolute top-2 right-2  "
-                  onClick={(e) => e.stopPropagation()}
-                  onDoubleClick={(e) => e.stopPropagation()}
-                >
-                  <DropdownMenuEllipsis
-                    ref={menuRef}
-                    folder={folder}
-                    onFolderClick={onFolderClick}
-                  />
-                </div>
+                {selectedFolder?.length === 0 && (
+                  <div
+                    className="absolute top-2 right-2  "
+                    onClick={(e) => e.stopPropagation()}
+                    onDoubleClick={(e) => e.stopPropagation()}
+                  >
+                    <DropdownMenuEllipsis
+                      ref={menuRef}
+                      folder={folder}
+                      onFolderClick={onFolderClick}
+                    />
+                  </div>
+                )}
                 <FolderIcon
                   height={150}
                   width={150}
@@ -174,7 +183,9 @@ export const File = ({
   setRename,
   args,
 }) => {
+  const dispatch = useDispatch();
   const triggerRef = useRef(null);
+  const { selectedFolder } = useSelector((state) => state.segment);
   const ext = file?.name?.split(".").pop()?.toLowerCase();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `file/${file.id}`,
@@ -217,7 +228,7 @@ export const File = ({
       );
     }
   };
-
+  const isFolderSelected = selectedFolder?.some((el) => el?.id === folder?.id);
   return (
     <>
       <TooltipProvider>
@@ -229,16 +240,21 @@ export const File = ({
                 {...listeners}
                 {...attributes}
                 style={style}
-                className={`shadow p-3 max-w-70 max-h-70 flex flex-col justify-center items-center bg-gray-100  cursor-pointer overflow-hidden rounded-md relative`}
+                className={`shadow p-3 max-w-70 max-h-70 flex flex-col justify-center items-center  ${
+                  isFolderSelected ? "bg-[#dfe8fd]" : "bg-gray-100"
+                } cursor-pointer overflow-hidden rounded-md relative`}
                 onDoubleClick={() => triggerRef.current.click()}
+                onPointerDown={() => dispatch(setSelectedFolder(file))}
               >
-                <div
-                  className="absolute top-2 right-2"
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onDoubleClick={(e) => e.stopPropagation()}
-                >
-                  <DropdownMenuEllipsis folder={folder} />
-                </div>
+                {selectedFolder?.length === 0 && (
+                  <div
+                    className="absolute top-2 right-2"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onDoubleClick={(e) => e.stopPropagation()}
+                  >
+                    <DropdownMenuEllipsis folder={folder} />
+                  </div>
+                )}
 
                 {renderPreview()}
 

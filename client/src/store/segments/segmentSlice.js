@@ -9,7 +9,7 @@ import { showToast } from "@/lib/toast";
 const initialState = {
   segmentData: null,
   currentFolder: null,
-  selectedFolder: null,
+  selectedFolder: [],
   breadcrumbPath: [],
 };
 const segmentSlicer = createSlice({
@@ -23,7 +23,14 @@ const segmentSlicer = createSlice({
       state.currentFolder = action.payload;
     },
     setSelectedFolder: (state, action) => {
-      state.selectedFolder = action.payload;
+      const segment = action.payload;
+      if (state.selectedFolder.some((el) => el.id === segment?.id)) {
+        state.selectedFolder = state.selectedFolder.filter(
+          (item) => item.id !== segment?.id
+        );
+      } else {
+        state.selectedFolder.push({ id: segment?.id, name: segment?.name });
+      }
     },
     setBreadcrumbPath: (state, action) => {
       state.breadcrumbPath = action.payload;
@@ -47,13 +54,6 @@ const segmentSlicer = createSlice({
           break;
       }
     },
-    moveSegment: (state, action) => {
-      let length = state.breadcrumbPath.length;
-      let lastElem = state.breadcrumbPath[length - 1].id;
-      if (length > 0 && state.currentFolder[0].id !== state.segmentData[0].id) {
-        state.currentFolder = findFolderById(lastElem, finalTree);
-      }
-    },
   },
 });
 
@@ -64,5 +64,4 @@ export const {
   setSelectedFolder,
   setBreadcrumbPath,
   updateCurrentFolder,
-  moveSegment,
 } = segmentSlicer.actions;
