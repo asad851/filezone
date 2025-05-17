@@ -98,13 +98,15 @@ export function FolderList({ item, level, renderItems }) {
         {...listeners}
         key={item.id}
         style={style}
-        className={`flex flex-col max-w-full w-full  hover:bg-gray-100 rounded-md p-1 pl-${
-          level + 1
-        } ${isOver ? "bg-blue-200" : ""} ${
-          isDragging ? "cursor-[grabbing!important]" : "cursor-pointer"
-        }`}
+        className={`flex flex-col max-w-full w-full  hover:bg-gray-100 rounded-md p-1  ${
+          isOver ? "bg-blue-200" : ""
+        } ${isDragging ? "cursor-[grabbing!important]" : "cursor-pointer"}`}
       >
-        <div className="flex items-center gap-1 rounded-md p-1">
+        <div
+          className={`flex items-center gap-1 rounded-md p-1 pl-[${
+            level + 1
+          }!important]`}
+        >
           {/* Drag handle only */}
           <div className="" onClick={(e) => e.stopPropagation()}>
             {isExpanded ? (
@@ -128,7 +130,7 @@ export function FolderList({ item, level, renderItems }) {
 
           {/* Click area */}
           <div
-            className="flex items-center gap-1 w-full"
+            className={`flex items-center gap-1 w-full `}
             onPointerDown={(e) => {
               e.stopPropagation();
               onFileFolderDoubleClick(item);
@@ -141,7 +143,9 @@ export function FolderList({ item, level, renderItems }) {
       </div>
 
       {isExpanded && item.children && (
-        <div className={`pt-1 w-full flex flex-col gap-1 pl-${level}`}>
+        <div
+          className={`pt-1 w-full flex flex-col gap-1 pl-2`}
+        >
           {renderItems(item.children, level + 1)}
         </div>
       )}
@@ -171,11 +175,15 @@ export function Filelist({ item, level }) {
       {...listeners}
       style={style}
       key={item.id}
-      className={`flex flex-col max-w-full w-full hover:bg-gray-100 rounded-md p-1 pl-${
-        level + 1
-      } ${transform ? "cursor-grabbing" : "cursor-pointer"}`}
+      className={`flex flex-col max-w-full w-full hover:bg-gray-100 rounded-md p-1  ${
+        transform ? "cursor-grabbing" : "cursor-pointer"
+      }`}
     >
-      <div className={`flex rounded-md p-1 items-center`}>
+      <div
+        className={`flex rounded-md p-1 items-center pl-[${
+          level + 1
+        }!important]`}
+      >
         <span className="mr-1">
           <FileText size={16} />
         </span>
