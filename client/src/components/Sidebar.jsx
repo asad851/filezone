@@ -42,6 +42,7 @@ export default function AppSidebar({ dragging }) {
       folder: segmentData,
     },
   });
+
   return (
     <div className="h-full w-[40%] lg:w-[30%] py-5 ">
       <div className="pb-5 border-b-2 flex flex-col gap-5 h-[27%]">
@@ -74,12 +75,15 @@ export default function AppSidebar({ dragging }) {
           dragging ? "overflow-hidden" : " overflow-y-auto"
         }  overflow-x-hidden mt-3 rounded-md shadow `}
       >
-        {!isLoading ? (
-          <FolderFileList items={segmentData} />
-        ) : (
+        {segmentData.length > 0 && <FolderFileList items={segmentData} />}
+        {isLoading && (
           <div className="min-h-[420px] w-full flex items-center justify-center">
-            {" "}
             <Loader />
+          </div>
+        )}
+        {segmentData?.length === 0 && (
+          <div className="px-2 h-full w-full flex items-center justify-center">
+            <h6>Oops No Folder/Files were found.</h6>
           </div>
         )}
       </div>

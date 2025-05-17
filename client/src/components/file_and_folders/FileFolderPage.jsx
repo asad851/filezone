@@ -57,15 +57,28 @@ export default function FileFolderPage() {
         isOver ? "bg-blue-200" : ""
       } `}
       style={{
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 260px))",
+        gridTemplateColumns:
+          segmentData?.length > 0
+            ? "repeat(auto-fit, minmax(250px, 260px))"
+            : "",
       }}
     >
-      <FolderTree
-        folders={currentFolder}
-        rename={rename}
-        setRename={setRename}
-        onFolderClick={handleFolderClick}
-      />
+      {segmentData?.length === 0 ? (
+        <div className="w-full   flex justify-center items-start ">
+          <img
+            src="./images/notfound.svg"
+            alt="not found"
+            className="object-center object-contain"
+          />
+        </div>
+      ) : (
+        <FolderTree
+          folders={currentFolder}
+          rename={rename}
+          setRename={setRename}
+          onFolderClick={handleFolderClick}
+        />
+      )}
     </div>
   ) : (
     <Loader />
