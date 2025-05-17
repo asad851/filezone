@@ -41,24 +41,33 @@ function Header() {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className={"size-13 p-0 rounded-full"} variant={"ghost"}>
+            <Button
+              className={`size-13 p-0 rounded-full ${
+                !userData?.avatar ? "bg-slate-500" : ""
+              }`}
+              variant={userData?.avatar ? "ghost" : ""}
+            >
               {" "}
-              <Avatar className="size-13">
-                <AvatarImage
-                  className="w-full h-full"
-                  src={userData?.avatar}
-                  alt="profile"
-                />
-                <AvatarFallback>{userData?.name?.slice(0, 1)}</AvatarFallback>
-              </Avatar>
+              {userData?.avatar ? (
+                <Avatar className="size-13">
+                  <AvatarImage
+                    className="w-full h-full"
+                    src={userData?.avatar}
+                    alt="profile"
+                  />
+                  <AvatarFallback>{userData?.name?.slice(0, 1)}</AvatarFallback>
+                </Avatar>
+              ) : (
+                <p className="capitalize">{userData?.name?.slice(0, 1)} </p>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuSeparator /> */}
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>Profile</DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
 
             <DropdownMenuSeparator />
             <DropdownMenuItem onSelect={() => handleLogout()}>
