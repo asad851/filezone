@@ -75,7 +75,7 @@ export default function AppSidebar({ dragging }) {
           dragging ? "overflow-hidden" : " overflow-y-auto"
         }  overflow-x-hidden mt-3 rounded-md shadow `}
       >
-        {segmentData.length > 0 && <FolderFileList items={segmentData} />}
+        {segmentData?.length > 0 && <FolderFileList items={segmentData} />}
         {isLoading && (
           <div className="min-h-[420px] w-full flex items-center justify-center">
             <Loader />
