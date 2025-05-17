@@ -24,6 +24,7 @@ export const useLoginApi = () => {
       dispatch(loginUser(responseData));
 
       localStorage.setItem("userData", JSON.stringify(responseData));
+      showToast("User successfully logged in", "success");
       navigate(HOME);
     } catch (err) {
       console.log("Login failed", err);
@@ -45,8 +46,13 @@ export const useRegisterApi = () => {
     try {
       const response = await postRegister(credentials).unwrap();
       showToast("user successfully registered", "success");
-      const responseData = response?.response;
+      const responseData = {
+        name: response?.response?.name,
+        email: response?.response?.email,
+        avatar: response?.response?.avatar,
+      };
       dispatch(loginUser(responseData));
+      Cookies.set("token", response?.response?.token);
       localStorage.setItem("userData", JSON.stringify(responseData));
       navigate(HOME);
     } catch (err) {

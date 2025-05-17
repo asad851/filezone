@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { REGISTER_PATH } from "@/routes/routeUrl";
 import { Eye, EyeOff } from "lucide-react";
 import Loader from "@/components/loader";
+import { toast } from "sonner";
 function Login() {
   const { handleLogin, isLoading } = useLoginApi();
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +36,18 @@ function Login() {
   const toggleVisibility = () => {
     setShowPassword(!showPassword);
   };
+  useEffect(() => {
+    let toastId= "signinId"
+    if (isLoading) {
+      toast.loading(`Signing you in please wait...`, {
+        closeButton: true,
+       id:toastId
+      });
+    }else{
+      toast.dismiss(toastId)
+    }
+  }, [isLoading]);
+
   return (
     <div className="min-h-screen w-full flex justify-center items-center">
       <Card className={` bg-black w-3/4 md:w-[55%] lg:w-[40%] xl:w-1/3  `}>
@@ -101,7 +114,7 @@ function Login() {
             </div>
 
             <Button type="submit" className={`mt-5`}>
-              {!isLoading ? "Sign in" : <Loader />}
+              {!isLoading ? "Sign in" : "Signing in"}
             </Button>
             <CardDescription>
               if you dont have an account ,{" "}
