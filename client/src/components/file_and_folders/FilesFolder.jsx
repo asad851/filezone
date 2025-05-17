@@ -96,7 +96,7 @@ export const Folder = ({
   const handleDoubleClick = (folder) => {
     onFolderClick(folder);
   };
-  const isFolderSelected = selectedFolder?.some((el) => el?.id === folder?.id);
+  const isFolderSelected = selectedFolder?.some((el) => el === folder?.id);
   useEffect(() => {
     if (click === 2 && !isFolderSelected) onFolderClick(folder);
     let timer = setTimeout(() => {
@@ -228,7 +228,7 @@ export const File = ({
       );
     }
   };
-  const isFolderSelected = selectedFolder?.some((el) => el?.id === folder?.id);
+  const isFolderSelected = selectedFolder?.some((el) => el === folder?.id);
   return (
     <>
       <TooltipProvider>
@@ -296,7 +296,7 @@ export function DropdownMenuEllipsis({ folder, onFolderClick }) {
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openRenameDialog, setOpenRenameDialog] = useState(false);
   const handleDeleteClick = async () => {
-    await handleDeleteSegment(folder?.id);
+    await handleDeleteSegment([folder?.id]);
     const filterDeleted = currentFolder?.filter(
       (item) => item.id !== folder?.id
     );

@@ -24,13 +24,16 @@ const segmentSlicer = createSlice({
     },
     setSelectedFolder: (state, action) => {
       const segment = action.payload;
-      if (state.selectedFolder.some((el) => el.id === segment?.id)) {
+      if (state.selectedFolder.some((el) => el === segment?.id)) {
         state.selectedFolder = state.selectedFolder.filter(
-          (item) => item.id !== segment?.id
+          (item) => item !== segment?.id
         );
       } else {
-        state.selectedFolder.push({ id: segment?.id, name: segment?.name });
+        state.selectedFolder.push(segment?.id);
       }
+    },
+    clearSelectedFolder: (state, action) => {
+      state.selectedFolder = [];
     },
     setBreadcrumbPath: (state, action) => {
       state.breadcrumbPath = action.payload;
@@ -64,4 +67,5 @@ export const {
   setSelectedFolder,
   setBreadcrumbPath,
   updateCurrentFolder,
+  clearSelectedFolder
 } = segmentSlicer.actions;
