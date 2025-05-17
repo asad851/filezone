@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -28,6 +28,7 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 function Register() {
   const inputRef = useRef(null);
   const { handleRegister, isLoading } = useRegisterApi();
@@ -78,9 +79,21 @@ function Register() {
     if (file) url = await handleUpload();
     await handleRegister({ ...data, ...(url ? { avatar: url } : {}) });
   };
+
+  useEffect(() => {
+    let toastId = "registerId";
+    if (isLoading) {
+      toast.loading(`Registering user please wait...`, {
+        closeButton: true,
+        id: toastId,
+      });
+    } else {
+      toast.dismiss(toastId);
+    }
+  }, [isLoading]);
+  
   return (
     <div className="min-h-screen h-full w-full flex justify-center items-center overflow-y-auto py-3">
-     
       <Card className={` bg-black w-3/4 md:w-[55%] lg:w-[35%]  `}>
         <CardHeader className={`text-center`}>
           <div className="w-full flex justify-center  h-32">
