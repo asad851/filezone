@@ -147,6 +147,9 @@ export const Folder = ({
                     className="absolute top-2 right-2  "
                     onClick={(e) => e.stopPropagation()}
                     onDoubleClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                    }}
                   >
                     <DropdownMenuEllipsis
                       ref={menuRef}
