@@ -39,7 +39,7 @@ export default function FolderFileList({ items }) {
   };
 
   return (
-    <div className="py-4 px-1 pb-2 h-full flex flex-col gap-1 w-full ">
+    <div className="py-4 px-1 pb-5 h-full flex flex-col gap-1 w-full ">
       {renderItems(items)}
     </div>
   );

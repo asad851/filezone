@@ -44,7 +44,7 @@ export default function AppSidebar({ dragging }) {
   });
 
   return (
-    <div className="h-full w-[40%] lg:w-[30%] py-5 ">
+    <div className="h-full w-[40%] lg:min-w-[24%] lg:w-full lg:max-w-1/4 py-5 ">
       <div className="pb-5 border-b-2 flex flex-col gap-5 h-[27%]">
         <div className="hidden " {...getRootProps()}>
           <input {...getInputProps({})} multiple ref={fileInputRef} />

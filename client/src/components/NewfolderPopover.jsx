@@ -24,7 +24,9 @@ import {
 import { findFolderById } from "@/utils/fileFolder";
 export default function NewfolderPopover() {
   const dispatch = useDispatch();
-  const { breadcrumbPath } = useSelector((state) => state.segment);
+  const { breadcrumbPath, currentFolder } = useSelector(
+    (state) => state.segment
+  );
   const { handleCreateFolder, data } = useCreateSegmentApi();
   const [value, setValue] = useState("");
   const operationAfterClick = () => setValue("");
@@ -37,6 +39,18 @@ export default function NewfolderPopover() {
     };
 
     if (value) {
+      if (
+        currentFolder.some(
+          (folder) => folder.name.toLowerCase() === value.toLowerCase()
+        )
+      ) {
+        showToast(
+          `This destination already contains a folder named "${value}"`,
+          "error"
+        );
+        operationAfterClick();
+        return;
+      }
       await handleCreateFolder(newFolder);
       let segmentId = breadcrumbPath[breadcrumbPath.length - 1]?.id;
       const updatedFolder = findFolderById(segmentId, data?.response?.tree);
