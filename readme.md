@@ -1,4 +1,4 @@
-# File Management System
+# File Management System(Filezone)
 
 A fullstack file management web application that allows users to upload, organize, and manage files and folders securely. Built using React.js for the frontend, Firebase Storage for file handling, NeonDB for metadata storage, and custom authentication for secure user access.
 
