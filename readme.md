@@ -48,6 +48,11 @@ A fullstack file management web application that allows users to upload, organiz
 
 2. **Install dependencies**
 
+   ```bash
+   npm install
+
+   ```
+
 3. **Environment Variables**
    **_Create a .env file and add your Firebase and DB credentials:_**
    ```.env
