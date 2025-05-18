@@ -29,7 +29,7 @@ A fullstack file management web application that allows users to upload, organiz
 | Layer          | Tech Used                                             |
 | -------------- | ----------------------------------------------------- |
 | Frontend       | React.js, @dnd-kit, HTML5 Drag & Drop                 |
-| Authentication | Custom Auth System (Node.js/Express or Firebase Auth) |
+| Authentication | Custom Auth System (Node.js/Express) |
 | Storage        | Firebase Storage                                      |
 | Database       | NeonDB (PostgreSQL)                                   |
 | State Mgmt     | React Context / Redux Toolkit (optional)              |
