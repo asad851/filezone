@@ -14,6 +14,7 @@ import {
 } from "@/store/segments/segmentSlice";
 import { findFolderById } from "@/utils/fileFolder";
 import FileViewerModal from "./FileViewerModal";
+import TooltipCommon from "../common/TooltipCommon";
 
 export function FolderList({ item, level, renderItems }) {
   const dispatch = useDispatch();
@@ -103,48 +104,56 @@ export function FolderList({ item, level, renderItems }) {
           isOver ? "bg-blue-200" : ""
         } ${isDragging ? "cursor-[grabbing!important]" : "cursor-pointer"}`}
       >
-        <div
-          className={`flex items-center gap-1 rounded-md p-1 pl-[${
-            level + 1
-          }!important]`}
-        >
-          {/* Drag handle only */}
-          <div className="" onClick={(e) => e.stopPropagation()}>
-            {isExpanded ? (
-              <ChevronDown
-                size={16}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  onFolderSingleclick(item);
-                }}
-              />
-            ) : (
-              <ChevronRight
-                size={16}
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  onFolderSingleclick(item);
-                }}
-              />
-            )}
-          </div>
+        <TooltipCommon
+          children={
+            <div
+              className={`flex items-center gap-1 rounded-md p-1 `}
+              style={{ paddingLeft: `${5 * level}px` }}
+            >
+              {/* Drag handle only */}
+              <div className="" onClick={(e) => e.stopPropagation()}>
+                {isExpanded ? (
+                  <ChevronDown
+                    size={16}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      onFolderSingleclick(item);
+                    }}
+                  />
+                ) : (
+                  <ChevronRight
+                    size={16}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                      onFolderSingleclick(item);
+                    }}
+                  />
+                )}
+              </div>
 
-          {/* Click area */}
-          <div
-            className={`flex items-center gap-1 w-full `}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onFileFolderDoubleClick(item);
-            }}
-          >
-            {isExpanded ? <FolderOpen size={16} /> : <FolderIcon size={16} />}
-            <span className="text-sm truncate">{item.name}</span>
-          </div>
-        </div>
+              {/* Click area */}
+              <div
+                className={`flex items-center gap-1 w-full `}
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  onFileFolderDoubleClick(item);
+                }}
+              >
+                {isExpanded ? (
+                  <FolderOpen size={16} />
+                ) : (
+                  <FolderIcon size={16} />
+                )}
+                <span className="text-sm truncate">{item.name}</span>
+              </div>
+            </div>
+          }
+          tooltip={item?.name}
+        />
       </div>
 
       {isExpanded && item.children && (
-        <div className={`pt-1 w-full flex flex-col gap-1 pl-2`}>
+        <div className={`pt-1 w-full flex flex-col gap-1 `}>
           {renderItems(item.children, level + 1)}
         </div>
       )}
@@ -170,33 +179,38 @@ export function Filelist({ item, level }) {
 
   return (
     <>
-      <div
-        ref={setNodeRef}
-        {...attributes}
-        {...listeners}
-        style={style}
-        key={item.id}
-        className={`flex flex-col max-w-full w-full hover:bg-gray-100 rounded-md p-1  ${
-          transform ? "cursor-grabbing" : "cursor-pointer"
-        }`}
-        onClick={(e) => {
-          e.stopPropagation();
-          triggerRef.current.click();
-        }}
-      >
-        <div
-          className={`flex rounded-md p-1 items-center pl-[${
-            level + 1
-          }!important]`}
-        >
-          <span className="mr-1">
-            <FileText size={16} />
-          </span>
-          <span className="ml-1 text-sm inline-block truncate">
-            {item.name}
-          </span>
-        </div>
-      </div>
+      <TooltipCommon
+        children={
+          <div
+            ref={setNodeRef}
+            {...attributes}
+            {...listeners}
+            style={style}
+            key={item.id}
+            className={`flex flex-col max-w-full w-full hover:bg-gray-100 rounded-md p-1  ${
+              transform ? "cursor-grabbing" : "cursor-pointer"
+            }`}
+            onClick={(e) => {
+              e.stopPropagation();
+              triggerRef.current.click();
+            }}
+          >
+            <div
+              className={`flex rounded-md p-1 items-center `}
+              style={{ paddingLeft: `${level * 5}px` }}
+            >
+              <span className="mr-1">
+                <FileText size={16} />
+              </span>
+              <span className="ml-1 text-sm inline-block truncate">
+                {item.name}
+              </span>
+            </div>
+          </div>
+        }
+        tooltip={item?.name}
+      />
+
       <FileViewerModal file={item} triggerRef={triggerRef} />
     </>
   );

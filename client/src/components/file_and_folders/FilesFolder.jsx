@@ -118,7 +118,7 @@ export const Folder = ({
       if (clickTimeout) clearTimeout(clickTimeout);
     };
   }, [clickTimeout]);
-  
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -274,8 +274,11 @@ export const File = ({
                 {selectedFolder?.length === 0 && (
                   <div
                     className="absolute top-2 right-2"
-                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                     onDoubleClick={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => {
+                      e.stopPropagation();
+                    }}
                   >
                     <DropdownMenuEllipsis folder={folder} />
                   </div>
@@ -353,6 +356,7 @@ export function DropdownMenuEllipsis({ folder, onFolderClick }) {
             </DropdownMenuItem>
             <DropdownMenuItem
               onPointerDown={(e) => {
+                e.stopPropagation();
                 e.preventDefault();
                 setOpenDropdown(false);
                 setOpenRenameDialog(true);
