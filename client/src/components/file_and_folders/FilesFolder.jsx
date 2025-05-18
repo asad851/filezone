@@ -92,22 +92,33 @@ export const Folder = ({
     onFolderClick(folder);
   };
   const isFolderSelected = selectedFolder?.some((el) => el === folder?.id);
-  useEffect(() => {
-    if (click === 2 && !isFolderSelected) onFolderClick(folder);
-    let timer = setTimeout(() => {
-      setClick(0);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [click, isFolderSelected]);
+  const [clickTimeout, setClickTimeout] = useState(null);
 
   const handleClick = (e) => {
     e.stopPropagation();
-    if (selectedFolder.length > 0 && (e.ctrlKey || e.metaKey)) {
-      dispatch(setSelectedFolder(folder));
+    if (clickTimeout) {
+      clearTimeout(clickTimeout);
+      setClickTimeout(null);
+      onFolderClick(folder);
     } else {
-      dispatch(toggleSelectedFolder(folder));
+      const timeout = setTimeout(() => {
+        if (selectedFolder.length > 0 && (e.ctrlKey || e.metaKey)) {
+          dispatch(setSelectedFolder(folder));
+        } else {
+          dispatch(toggleSelectedFolder(folder));
+        }
+        setClickTimeout(null);
+      }, 250);
+
+      setClickTimeout(timeout);
     }
   };
+  useEffect(() => {
+    return () => {
+      if (clickTimeout) clearTimeout(clickTimeout);
+    };
+  }, [clickTimeout]);
+  
   return (
     <TooltipProvider>
       <Tooltip>

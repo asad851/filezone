@@ -29,11 +29,9 @@ function Home() {
   const dispatch = useDispatch();
   const [draggedItem, setDraggedItem] = useState(null);
   const { handleUpdateSegment } = useUpdateSegmentApi();
-  const { data, error, isLoading } = useGetSegmentQuery();
-  const { handleCreateSegment } = useCreateSegmentApi();
-  const { segmentData, breadcrumbPath, currentFolder ,selectedFolder} = useSelector(
-    (state) => state.segment
-  );
+  const { data, error } = useGetSegmentQuery();
+  const { segmentData, breadcrumbPath, currentFolder, selectedFolder } =
+    useSelector((state) => state.segment);
 
   const pointerSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -59,14 +57,11 @@ function Home() {
       (activeParentId === null && overId === "movefiletoHome")
     )
       return;
-
     const draggedItem = active.data.current.item;
     const targetFolder = over.data.current.folder;
 
     if (draggedItem && targetFolder) {
-      // console.log(`Move '${draggedItem.name}' → into '${targetFolder.name}'`);
       const sourceItem = findFolderById(activeId, segmentData);
-      const targetItem = findFolderById(overId, segmentData);
       if (isDescendant(sourceItem, overId)) {
         showToast(
           "Invalid move: Cannot move a parent into its child",
@@ -78,7 +73,7 @@ function Home() {
       await handleUpdateSegment({ parentId: overId }, activeId);
     }
   };
-  console.log(selectedFolder)
+
   useEffect(() => {
     let length = breadcrumbPath.length;
     let lastElem = breadcrumbPath[length - 1]?.id;

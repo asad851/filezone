@@ -42,7 +42,7 @@ function MainContentarea() {
   return (
     <div className=" w-full  h-full bg-white rounded-lg shadow-lg p-5 overflow-hidden">
       {selectedFolder?.length < 1 ? (
-        <div className="w-full p-3 border-b-2">
+        <div className="w-full p-3 border-b-2 h-18 flex items-center">
           <FolderBreadcrumb
             path={breadcrumbPath}
             onNavigate={handleBreadcrumbClick}
@@ -50,7 +50,7 @@ function MainContentarea() {
           />
         </div>
       ) : (
-        <div className="w-full flex items-center gap-2 p-3 border-b-2">
+        <div className="w-full flex items-center gap-2 p-3 border-b-2 h-18">
           <CircleXIcon
             className="cursor-pointer"
             onClick={() => dispatch(clearSelectedFolder())}
