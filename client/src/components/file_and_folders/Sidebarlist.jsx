@@ -13,6 +13,7 @@ import {
   setCurrentFolder,
 } from "@/store/segments/segmentSlice";
 import { findFolderById } from "@/utils/fileFolder";
+import FileViewerModal from "./FileViewerModal";
 
 export function FolderList({ item, level, renderItems }) {
   const dispatch = useDispatch();
@@ -143,9 +144,7 @@ export function FolderList({ item, level, renderItems }) {
       </div>
 
       {isExpanded && item.children && (
-        <div
-          className={`pt-1 w-full flex flex-col gap-1 pl-2`}
-        >
+        <div className={`pt-1 w-full flex flex-col gap-1 pl-2`}>
           {renderItems(item.children, level + 1)}
         </div>
       )}
@@ -154,6 +153,7 @@ export function FolderList({ item, level, renderItems }) {
 }
 
 export function Filelist({ item, level }) {
+  const triggerRef = useRef(null);
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `sidebarfile/${item.id}`,
     data: {
@@ -169,26 +169,35 @@ export function Filelist({ item, level }) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      style={style}
-      key={item.id}
-      className={`flex flex-col max-w-full w-full hover:bg-gray-100 rounded-md p-1  ${
-        transform ? "cursor-grabbing" : "cursor-pointer"
-      }`}
-    >
+    <>
       <div
-        className={`flex rounded-md p-1 items-center pl-[${
-          level + 1
-        }!important]`}
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        style={style}
+        key={item.id}
+        className={`flex flex-col max-w-full w-full hover:bg-gray-100 rounded-md p-1  ${
+          transform ? "cursor-grabbing" : "cursor-pointer"
+        }`}
+        onClick={(e) => {
+          e.stopPropagation();
+          triggerRef.current.click();
+        }}
       >
-        <span className="mr-1">
-          <FileText size={16} />
-        </span>
-        <span className="ml-1 text-sm inline-block truncate">{item.name}</span>
+        <div
+          className={`flex rounded-md p-1 items-center pl-[${
+            level + 1
+          }!important]`}
+        >
+          <span className="mr-1">
+            <FileText size={16} />
+          </span>
+          <span className="ml-1 text-sm inline-block truncate">
+            {item.name}
+          </span>
+        </div>
       </div>
-    </div>
+      <FileViewerModal file={item} triggerRef={triggerRef} />
+    </>
   );
 }
