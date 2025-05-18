@@ -48,10 +48,10 @@ A fullstack file management web application that allows users to upload, organiz
 
 2. **Install dependencies**
 
-   ```bash
-   npm install
-   ```
-
 3. **Environment Variables**
    **_Create a .env file and add your Firebase and DB credentials:_**
-   
+   ```.env
+   VITE_FIREBASE_API_KEY=your_key
+   VITE_FIREBASE_PROJECT_ID=your_project
+   VITE_NEON_DB_URL=your_postgres_url
+   ```
