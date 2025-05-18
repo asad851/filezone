@@ -29,11 +29,12 @@ A fullstack file management web application that allows users to upload, organiz
 | Layer          | Tech Used                                             |
 | -------------- | ----------------------------------------------------- |
 | Frontend       | React.js, @dnd-kit, HTML5 Drag & Drop                 |
-| Authentication | Custom Auth System (Node.js/Express) |
+| Authentication | Custom Auth System (Express.js)                  |
 | Storage        | Firebase Storage                                      |
 | Database       | NeonDB (PostgreSQL)                                   |
-| State Mgmt     | React Context / Redux Toolkit (optional)              |
-| Styling        | Tailwind CSS / SCSS / CSS Modules                     |
+| State Mgmt     | Redux Toolkit (optional)                             |
+| Styling        | Tailwind CSS                                          |
+| UI Library     | Shadcn UI                                             |
 | Deployment     | Vercel / Render                                       |
 
 ## Setup & Installation
