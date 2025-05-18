@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
 import {
+  clearSelectedFolder,
   setBreadcrumbPath,
   setCurrentFolder,
   setSegment,
@@ -62,6 +63,7 @@ export default function FileFolderPage() {
             ? "repeat(auto-fit, minmax(250px, 260px))"
             : "",
       }}
+      onClick={() => dispatch(clearSelectedFolder())}
     >
       {segmentData?.length === 0 ? (
         <div className="w-full   flex justify-center items-start ">

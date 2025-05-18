@@ -34,6 +34,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setCurrentFolder,
   setSelectedFolder,
+  toggleSelectedFolder,
 } from "@/store/segments/segmentSlice";
 import { useGetSegmentQuery } from "@/helper/apis/folder/setup";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
@@ -49,11 +50,9 @@ export const Folder = ({
 }) => {
   const dispatch = useDispatch();
   const menuRef = useRef(null);
-  const timeoutRef = useRef(null);
   const { selectedFolder } = useSelector((state) => state.segment);
-  const [canDrag, setCanDrag] = useState(false);
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
-    id: `folder/${folder.id}`,
+    id: `folderContainer/${folder.id}`,
     data: {
       type: "folder",
       folder,
@@ -72,16 +71,12 @@ export const Folder = ({
       type: "folder",
       item: folder,
     },
-    activationConstraint: {
-      delay: 250,
-      tolerance: 5,
-    },
   });
 
   const [click, setClick] = useState(0);
   const mergedRef = (node) => {
     setDroppableRef(node);
-    if (canDrag) setDraggableRef(node);
+    setDraggableRef(node);
   };
 
   const style = {
@@ -105,6 +100,14 @@ export const Folder = ({
     return () => clearTimeout(timer);
   }, [click, isFolderSelected]);
 
+  const handleClick = (e) => {
+    e.stopPropagation();
+    if (selectedFolder.length > 0 && (e.ctrlKey || e.metaKey)) {
+      dispatch(setSelectedFolder(folder));
+    } else {
+      dispatch(toggleSelectedFolder(folder));
+    }
+  };
   return (
     <TooltipProvider>
       <Tooltip>
@@ -128,8 +131,8 @@ export const Folder = ({
               onPointerDown={(e) => {
                 e.stopPropagation();
                 setClick((prev) => Math.min(prev + 1, 2));
-                dispatch(setSelectedFolder(folder));
               }}
+              onClick={handleClick}
             >
               <div
                 ref={mergedRef}
@@ -231,7 +234,15 @@ export const File = ({
       );
     }
   };
-  const isFolderSelected = selectedFolder?.some((el) => el === folder?.id);
+  const isFolderSelected = selectedFolder?.includes(file?.id);
+  const handleClick = (e) => {
+    e.stopPropagation();
+    if (selectedFolder.length > 0 && (e.ctrlKey || e.metaKey)) {
+      dispatch(setSelectedFolder(file));
+    } else {
+      dispatch(toggleSelectedFolder(file));
+    }
+  };
   return (
     <>
       <TooltipProvider>
@@ -247,7 +258,7 @@ export const File = ({
                   isFolderSelected ? "bg-[#dfe8fd]" : "bg-gray-100"
                 } cursor-pointer overflow-hidden rounded-md relative`}
                 onDoubleClick={() => triggerRef.current.click()}
-                onPointerDown={() => dispatch(setSelectedFolder(file))}
+                onClick={handleClick}
               >
                 {selectedFolder?.length === 0 && (
                   <div
