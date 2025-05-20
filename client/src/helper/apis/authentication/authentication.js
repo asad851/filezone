@@ -45,40 +45,44 @@ export const useLoginApi = () => {
 export const useRegisterApi = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [postRegister, { isLoading, data }] = usePostRegisterMutation();
+  const [postRegister, { isLoading }] = usePostRegisterMutation();
   const [getUploadUrls] = useGetUploadUrlsMutation();
   const [postAvatar] = usePostAvatarMutation();
   const handleRegister = async (credentials, file) => {
     try {
       let fileIn = file[0];
+      let avatar;
       const response = await postRegister(credentials).unwrap();
       Cookies.set("token", response?.token);
-      const uploadUrlsData = await getUploadUrls(file).unwrap();
-      console.log(uploadUrlsData);
-      const { uploadUrl, publicUrl } = uploadUrlsData.uploadUrls[0];
-      console.log(uploadUrl);
-      try {
-        await fetch(uploadUrl, {
-          method: "PUT",
-          headers: {
-            "Content-Type": fileIn.type,
-          },
-          body: fileIn,
-        });
-      } catch (err) {
-        console.log(err);
-      }
+      showToast("user successfully registered", "success");
 
-      await postAvatar(publicUrl);
+      if (file) {
+        const uploadUrlsData = await getUploadUrls(file).unwrap();
+        showToast("Please wait while we are redirecting you to homepage!", "info");
+        const { uploadUrl, publicUrl } = uploadUrlsData.uploadUrls[0];
+        avatar = publicUrl;
+        try {
+          await fetch(uploadUrl, {
+            method: "PUT",
+            headers: {
+              "Content-Type": fileIn.type,
+            },
+            body: fileIn,
+          });
+        } catch (err) {
+          console.log(err);
+        }
+
+        await postAvatar(publicUrl);
+      }
       const responseData = {
         name: response?.data?.name,
         email: response?.data?.email,
-        avatar: publicUrl,
+        avatar: avatar,
       };
 
       dispatch(loginUser(responseData));
       localStorage.setItem("userData", JSON.stringify(responseData));
-      showToast("user successfully registered", "success");
       navigate(HOME);
     } catch (err) {
       showToast(err?.data?.errorMessage, "error");
