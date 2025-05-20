@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -29,6 +29,7 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { useDropzone } from "react-dropzone";
 function Register() {
   const inputRef = useRef(null);
   const { handleRegister, isLoading } = useRegisterApi();
@@ -39,32 +40,25 @@ function Register() {
   const toggleVisibility = () => {
     setShowPassword(!showPassword);
   };
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
 
-    if (selectedFile && selectedFile.type.startsWith("image/")) {
-      setFile(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
-    } else {
-      alert("Please select an image file");
-      setFile(null);
-      setPreview("");
+  const onDrop = useCallback((acceptedFiles) => {
+    const imageFile = acceptedFiles[0];
+    if (!imageFile || !imageFile.type.startsWith("image/")) {
+      alert("Please upload an image file");
+      return;
     }
-  };
 
-  const handleUpload = async () => {
-    if (!file) return alert("Select a file first");
+    setFile(acceptedFiles);
+    setPreview(URL.createObjectURL(imageFile));
+  }, []);
 
-    const fileRef = ref(storage, `uploads/${file.name}`);
-
-    try {
-      const snapshot = await uploadBytes(fileRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      return downloadURL;
-    } catch (err) {
-      console.error("Upload error", err);
-    }
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false, // set to false if only one image is allowed
+    accept: {
+      "image/*": [],
+    },
+  });
 
   const {
     register,
@@ -75,9 +69,7 @@ function Register() {
   });
 
   const onSubmit = async (data) => {
-    let url;
-    if (file) url = await handleUpload();
-    await handleRegister({ ...data, ...(url ? { avatar: url } : {}) });
+    await handleRegister(data, file);
   };
 
   useEffect(() => {
@@ -91,7 +83,6 @@ function Register() {
       toast.dismiss(toastId);
     }
   }, [isLoading]);
-  
   return (
     <div className="min-h-screen h-full w-full flex justify-center items-center overflow-y-auto py-3">
       <Card className={` bg-black w-3/4 md:w-[55%] lg:w-[35%]  `}>
@@ -112,39 +103,30 @@ function Register() {
             onSubmit={handleSubmit(onSubmit)}
             className="w-full h-full p-2 flex flex-col gap-5"
           >
-            <input
-              ref={inputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              hidden
-            />
-
-            {file ? (
-              <div className="w-20 h-20 rounded-full bg-white flex justify-center items-center shadow">
+            <div
+              {...getRootProps()}
+              className="w-20 h-20 rounded-full cursor-pointer bg-white flex justify-center items-center shadow text-black "
+            >
+              <input {...getInputProps()} hidden />
+              {file ? (
                 <img
                   className="w-full h-full object-center object-cover rounded-full"
                   src={preview}
                   alt="profile"
                 />
-              </div>
-            ) : (
-              <div className="w-20 h-20 rounded-full bg-white flex justify-center items-center shadow text-black">
+              ) : (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <UploadIcon
-                        onClick={() => inputRef.current.click()}
-                        className="cursor-pointer"
-                      />
+                      <UploadIcon />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>click here to upload your picture</p>
+                      <p>Click or drag to upload your picture</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </div>
-            )}
+              )}
+            </div>
 
             <div className="flex flex-col text-white  gap-3 ">
               <Label htmlFor="terms">Name</Label>

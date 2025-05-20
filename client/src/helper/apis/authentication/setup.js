@@ -19,8 +19,11 @@ export const authenticationApi = createApi({
         body: credentials,
       }),
     }),
+   
   }),
 });
 
-export const { usePostLoginMutation, usePostRegisterMutation } =
-  authenticationApi;
+export const {
+  usePostLoginMutation,
+  usePostRegisterMutation,
+} = authenticationApi;

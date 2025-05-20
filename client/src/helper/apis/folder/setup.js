@@ -47,6 +47,25 @@ export const fileFolderApi = createApi({
       }),
       invalidatesTags: ["Segment"],
     }),
+    getUploadUrls: builder.mutation({
+      query: (files) => ({
+        url: "users/get-upload-urls",
+        method: "POST",
+        body: files.map((file) => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        })),
+      }),
+    }),
+    
+    postAvatar: builder.mutation({
+      query: (avatar) => ({
+        url: "/users/update-avatar",
+        method: "POST",
+        body: { avatar },
+      }),
+    }),
   }),
 });
 
@@ -55,4 +74,6 @@ export const {
   useGetSegmentQuery,
   useUpdateSegmentMutation,
   useDeleteSegmentMutation,
+  useGetUploadUrlsMutation,
+  usePostAvatarMutation,
 } = fileFolderApi;

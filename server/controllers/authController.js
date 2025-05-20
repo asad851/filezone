@@ -70,7 +70,7 @@ export const registerController = async (req, res) => {
 
       let hashed = await bcrypt.hash(password, 10);
 
-      await prisma.user.create({
+      const userData = await prisma.user.create({
         data: {
           name,
           email,
@@ -80,6 +80,7 @@ export const registerController = async (req, res) => {
       });
 
       const data = {
+        id: userData.id,
         name,
         email,
         avatar,
@@ -96,13 +97,39 @@ export const registerController = async (req, res) => {
           secure: false,
           sameSite: "none",
         })
-        .json(response);
+        .json({ ...response, token });
     } catch (err) {
       console.error(err);
       res.status(500).json({ errorMessage: "Internal server error!" });
     }
   } catch (err) {
     res.status(500).json({ errorMessage: "Internal server error!" });
+  }
+};
+
+export const updateAvatarController = async (req, res) => {
+  try {
+    const { avatar } = req.body;
+
+    const userId = req.user.id;
+    if (!avatar || typeof avatar !== "string" || !userId) {
+      return res.status(400).json({ error: "Valid avatar URL is required" });
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        avatar,
+      },
+    });
+
+    res.status(200).json({
+      message: "Avatar updated successfully",
+      data: updated,
+    });
+  } catch (err) {
+    console.error("Avatar update error:", err);
+    res.status(500).json({ error: "Failed to update avatar" });
   }
 };
 
