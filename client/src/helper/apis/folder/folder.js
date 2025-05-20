@@ -2,54 +2,43 @@ import { useState } from "react";
 import {
   useDeleteSegmentMutation,
   useGetSegmentQuery,
+  useGetUploadUrlsMutation,
   usePostCreateSegmentMutation,
   useUpdateSegmentMutation,
 } from "./setup";
-import { storage } from "@/firebase";
 import { convertFilesToHierarchy } from "@/utils/fileFolder";
 import { showToast } from "@/lib/toast";
-import { uploadBytesResumable, getDownloadURL, ref } from "firebase/storage";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
 export const useCreateSegmentApi = () => {
   const [postCreateSegment, { data, isLoading, error }] =
     usePostCreateSegmentMutation();
+  const [getUploadUrls] = useGetUploadUrlsMutation();
   const { breadcrumbPath } = useSelector((state) => state.segment);
   const parentId = breadcrumbPath[breadcrumbPath.length - 1]?.id;
 
   const handleCreateSegment = async (files) => {
     try {
       const urls = [];
-      const promises = files.map(async (file) => {
+
+      const { uploadUrls } = await getUploadUrls(files).unwrap();
+      const promises = files.map(async (file, idx) => {
+        const { uploadUrl, publicUrl } = uploadUrls[idx];
+
         const nameArr = file?.path?.split("/");
         const name = nameArr[nameArr.length - 1];
-        const fileRef = ref(storage, `uploads/${name}`);
+        // const fileRef = ref(storage, `uploads/${name}`);
         const uploadToastId = toast.loading(`Uploading ${name}...`);
-        const uploadTask = uploadBytesResumable(fileRef, file);
-        return new Promise((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-              const progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              toast.message(`Uploading ${name}... ${Math.round(progress)}%`, {
-                id: uploadToastId,
-                closeButton: true,
-              });
-            },
-            (error) => {
-              toast.error(`Error uploading ${name}`, { id: uploadToastId });
-              reject(error);
-            },
-            async () => {
-              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              toast.success(`${name} uploaded`, { id: uploadToastId });
-              urls.push({ url: downloadURL, path: file.path });
-              resolve();
-            }
-          );
+        await fetch(uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type,
+          },
+          body: file,
         });
+        toast.success(`${name} uploaded`, { id: uploadToastId });
+        urls.push({ path: file?.path, url: publicUrl });
       });
       await Promise.all(promises);
       const readyFiles = files.map((file) => {
