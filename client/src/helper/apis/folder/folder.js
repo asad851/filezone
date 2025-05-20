@@ -83,9 +83,9 @@ export const useUpdateSegmentApi = () => {
     useUpdateSegmentMutation();
   const handleUpdateSegment = async (data, id) => {
     try {
-      showToast("The segment is getting updated, please wait!", "info");
+      showToast("The folder/file is getting updated, please wait!", "info");
       const res = await updateSegment({ data, id }).unwrap();
-      showToast("The segment has been updated successfully!", "success");
+      showToast("The folder/file has been updated successfully!", "success");
     } catch (err) {
       showToast(err?.data?.errorMessage, "error");
     }
@@ -97,10 +97,10 @@ export const useDeleteSegmentApi = () => {
   const [deleteSegment, { isLoading, error }] = useDeleteSegmentMutation();
   const handleDeleteSegment = async (data) => {
     try {
-      showToast("Please wait while we are deleting you file/folder", "info");
+      showToast("Please wait while we are deleting you files/folders", "info");
       const promises = data?.map((item) => deleteSegment(item));
       await Promise.all(promises);
-      showToast("The segment has been deleted successfully", "success");
+      showToast("The folders/files has been deleted successfully", "success");
     } catch (err) {
       showToast(err?.data?.errorMessage, "error");
     }

@@ -69,7 +69,7 @@ function Register() {
   });
 
   const onSubmit = async (data) => {
-    await handleRegister(data, file);
+    if (data) await handleRegister(data, file);
   };
 
   useEffect(() => {

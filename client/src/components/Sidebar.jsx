@@ -33,7 +33,7 @@ export default function AppSidebar({ dragging }) {
   const { handleCreateSegment } = useCreateSegmentApi();
 
   function onDrop(acceptedFiles, event) {
-    handleCreateSegment(acceptedFiles);
+    if (acceptedFiles.length > 0) handleCreateSegment(acceptedFiles);
   }
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: `sidebar/movefiletoHome`,
